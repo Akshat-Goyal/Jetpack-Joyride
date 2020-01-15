@@ -4,14 +4,17 @@ class Person:
 		self._x = x
 		self._y = y
 		self._disp = disp
-		self._dim = self._disp.shape
 
 	def drawPerson(self, grid):
-		for i in range(self._dim[0]):
-			for j in range(self._dim[1]):
-				grid.change(self._x + i, self._y + j, self._disp[i][j])
+		dim = self._disp.shape
+		for i in range(dim[0]):
+			for j in range(dim[1]):
+				if self._disp[i][j] != ' ':
+					grid.setBoardXY(self._x + i, self._y + j, self._disp[i][j])
 
 	def render(self, grid):
-		for i in range(self._dim[0]):
-			for j in range(self._dim[1]):
-				grid.change(self._x + i, self._y + j, '.')
+		dim = self._disp.shape
+		for i in range(dim[0]):
+			for j in range(dim[1]):
+				if self._disp[i][j] != ' ':
+					grid.setBoardXY(self._x + i, self._y + j, ' ')
