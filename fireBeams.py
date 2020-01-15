@@ -46,6 +46,8 @@ class FireBeam(Obstacle):
 	def checkCol(self, barry, grid):
 		ar = []
 		for i in self._arr:
+			if i[0][1] >= grid.getDim()[1][1]:
+				continue
 			if self.isFireBeam(barry.getXY()[0], barry.getXY()[1], barry.getDisp(), i):
 				ar.append(i)
 		for i in ar:

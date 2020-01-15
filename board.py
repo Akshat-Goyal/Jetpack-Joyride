@@ -1,5 +1,6 @@
 import numpy as np
 from coin import Coin
+import sys
 
 class Board:
 	''' contains the design of board '''
@@ -23,27 +24,29 @@ class Board:
 		for i in range(0, 2 * self._breadth, self._ground.shape[1]):
 			self._board[max(0, self._length-self._ground.shape[0]):, i:min(i+self._ground.shape[1], 2*self._breadth)] = self._ground[max(0, self._ground.shape[0]-self._length):, :min(self._ground.shape[1], 2*self._breadth-i)]
 
-	def shift(self, barry, coin, beam):
+	def shift(self, barry, coin, beam, magnet):
 		if not self._frame:
 			return
 		barry.render(self)
 		if not self._curCol:
 			self._frame -= 1
 			if not self._frame:				
-				self.fillGrid(beam, coin, 1)
+				self.fillGrid(beam, magnet, coin, 1)
 			else:
-				self.fillGrid(beam, coin, 1)
+				self.fillGrid(beam, magnet, coin, 1)
 		beam.changeY()
+		magnet.changeY()
 		self._curCol += 1
 		self._board[:, :2 * self._breadth - self._curCol] = self._board[:, 1:2 * self._breadth - self._curCol + 1]
 		self._curCol %= self._breadth
 		barry.move(0, self, coin, beam)
 		barry.drawPerson(self)
 
-	def fillGrid(self, beam, coin, frameNo):
+	def fillGrid(self, beam, magnet, coin, frameNo):
 		self._board[self._sky.shape[0]:self._length - self._ground.shape[0], frameNo * self._breadth:] = ' '
 		coin.drawCoin(self, frameNo)
 		beam.drawFireBeams(self, frameNo)
+		magnet.makeMagnet(self, frameNo)
 		
 	def setBoardXY(self, x, y, ch):
 		self._board[x][y] = ch
@@ -55,7 +58,8 @@ class Board:
 		return [[self._sky.shape[0], self._length - self._ground.shape[0]], [0, self._breadth]]
 
 	def gameOver(self):
-		pass
+		print("Game Over")
+		sys.exit(0)
 
 	def printBoard(self):
 		print("\033[0;0f", end="")
