@@ -5,16 +5,16 @@ class Person:
 		self._y = y
 		self._disp = disp
 
-	def drawPerson(self, grid):
+	def drawPerson(self, obj):
 		dim = self._disp.shape
 		for i in range(dim[0]):
 			for j in range(dim[1]):
 				if self._disp[i][j] != ' ':
-					grid.setBoardXY(self._x + i, self._y + j, self._disp[i][j])
+					obj['grid'].setBoardXY(self._x + i, self._y + j, self._disp[i][j])
 
-	def render(self, grid):
+	def render(self, obj):
 		dim = self._disp.shape
 		for i in range(dim[0]):
 			for j in range(dim[1]):
 				if self._disp[i][j] != ' ':
-					grid.setBoardXY(self._x + i, self._y + j, ' ')
+					obj['grid'].setBoardXY(self._x + i, self._y + j, ' ')

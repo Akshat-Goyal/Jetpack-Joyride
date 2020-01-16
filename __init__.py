@@ -10,13 +10,15 @@ import time
 if __name__ == "__main__":
 	os.system('clear')
 	grid = Board(40, 60, 5)
+	barry = Barry(grid.getDim(), 2, 10, 60)
 	coin = Coin()
-	coin.drawCoin(grid, 0)
-	barry = Barry(grid, 2, 10, 60)
 	beam = FireBeam()
 	magnet = Magnet()
-	beam.drawFireBeams(grid, 0)
-	barry.drawPerson(grid)
+	obj = {'grid': grid, 'barry': barry, 'coin': coin, 'beam': beam, 'magnet': magnet}
+	coin.drawCoin(obj, 0)
+	beam.drawFireBeams(obj, 0)
+	magnet.makeMagnet(obj, 0)
+	barry.drawPerson(obj)
 	grid.printBoard()
 	print("Score: " + str(barry.getScore()))
 	print("Live: " + str(barry.getLive()))
@@ -28,27 +30,27 @@ if __name__ == "__main__":
 
 	while(True):
 		if current_milli_time() - prev_time > milis_per_frame:
-			grid.shift(barry, coin, beam, magnet)
+			grid.shift(obj)
 			prev_time = current_milli_time()
 
 		ch = input_to(getch)
+		barry.render(obj)
 		barry.checkShield()
-		barry.render(grid)
-		magnet.checkMagnet(barry, grid, coin, beam)
+		magnet.checkMagnet(obj)
+		if ch != 'w':
+			barry.gravity(obj)
 		if ch == ' ':
 			barry.activateShield()
 		elif ch == 'd' or ch == 'D':
-			barry.move(2, grid, coin, beam)
+			barry.move(2, obj)
 		elif ch == 'a' or ch == 'A':
-			barry.move(-2, grid, coin, beam)
+			barry.move(-2, obj)
 		elif ch == 'w' or ch == 'W':
-			barry.jump(-2, grid, coin, beam)
+			barry.jump(-2, obj)
 		elif ch == 'q' or ch == 'Q':
 			break
-		if ch != 'w':
-			barry.gravity(grid, coin, beam)
-		magnet.drawMagnet(grid)
-		barry.drawPerson(grid)
+		magnet.drawMagnet(obj)
+		barry.drawPerson(obj)
 		grid.printBoard()
 		print("Score: " + str(barry.getScore()))
 		print("Live: " + str(barry.getLive()))

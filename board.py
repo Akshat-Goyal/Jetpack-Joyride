@@ -24,29 +24,29 @@ class Board:
 		for i in range(0, 2 * self._breadth, self._ground.shape[1]):
 			self._board[max(0, self._length-self._ground.shape[0]):, i:min(i+self._ground.shape[1], 2*self._breadth)] = self._ground[max(0, self._ground.shape[0]-self._length):, :min(self._ground.shape[1], 2*self._breadth-i)]
 
-	def shift(self, barry, coin, beam, magnet):
+	def shift(self, obj):
 		if not self._frame:
 			return
-		barry.render(self)
+		obj['barry'].render(obj)
 		if not self._curCol:
 			self._frame -= 1
 			if not self._frame:				
-				self.fillGrid(beam, magnet, coin, 1)
+				self.fillGrid(obj, 1)
 			else:
-				self.fillGrid(beam, magnet, coin, 1)
-		beam.changeY()
-		magnet.changeY()
+				self.fillGrid(obj, 1)
+		obj['beam'].changeY()
+		obj['magnet'].changeY()
 		self._curCol += 1
 		self._board[:, :2 * self._breadth - self._curCol] = self._board[:, 1:2 * self._breadth - self._curCol + 1]
 		self._curCol %= self._breadth
-		barry.move(0, self, coin, beam)
-		barry.drawPerson(self)
+		obj['barry'].move(0, obj)
+		obj['barry'].drawPerson(obj)
 
-	def fillGrid(self, beam, magnet, coin, frameNo):
+	def fillGrid(self, obj, frameNo):
 		self._board[self._sky.shape[0]:self._length - self._ground.shape[0], frameNo * self._breadth:] = ' '
-		coin.drawCoin(self, frameNo)
-		beam.drawFireBeams(self, frameNo)
-		magnet.makeMagnet(self, frameNo)
+		obj['coin'].drawCoin(obj, frameNo)
+		obj['beam'].drawFireBeams(obj, frameNo)
+		obj['magnet'].makeMagnet(obj, frameNo)
 		
 	def setBoardXY(self, x, y, ch):
 		self._board[x][y] = ch
