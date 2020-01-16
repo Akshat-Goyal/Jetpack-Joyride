@@ -18,24 +18,24 @@ class Magnet(Obstacle):
 		for i in ar:
 			self._arr.remove(i)
 
-	def isMagnet(self, x, y, disp, i):
-		if not len(self._arr):
-			return False
-		if y + disp.shape[1] <= i[1] or i[1] + self._disp.shape[1] <= y:
-			return False
-		if x >= i[0] + self._disp.shape[0] or i[0] >= x + disp.shape[0]:
-			return False
-		for j in range(self._disp.shape[0]):
-			for k in range(self._disp.shape[1]):
-				if self._disp[j][k] ==  ' ':
-					continue
-				if i[0] + j - x < 0 or i[0] + j - x >= disp.shape[0]:
-					continue
-				if i[1] + k - y < 0 or i[1] + k - y >= disp.shape[1]:
-					continue
-				if disp[i[0] + j - x][i[1] + k - y] != ' ':
-					return True
-		return False
+	# def isMagnet(self, x, y, disp, i):
+	# 	if not len(self._arr):
+	# 		return False
+	# 	if y + disp.shape[1] <= i[1] or i[1] + self._disp.shape[1] <= y:
+	# 		return False
+	# 	if x >= i[0] + self._disp.shape[0] or i[0] >= x + disp.shape[0]:
+	# 		return False
+	# 	for j in range(self._disp.shape[0]):
+	# 		for k in range(self._disp.shape[1]):
+	# 			if self._disp[j][k] ==  ' ':
+	# 				continue
+	# 			if i[0] + j - x < 0 or i[0] + j - x >= disp.shape[0]:
+	# 				continue
+	# 			if i[1] + k - y < 0 or i[1] + k - y >= disp.shape[1]:
+	# 				continue
+	# 			if disp[i[0] + j - x][i[1] + k - y] != ' ':
+	# 				return True
+	# 	return False
 
 	def checkMagnet(self, obj):
 		l = 0
@@ -75,7 +75,7 @@ class Magnet(Obstacle):
 						obj['grid'].setBoardXY(j + x, k + y, self._disp[j][k])
 
 	def makeMagnet(self, obj, frameNo):
-		count = int(random.random() + 0)
+		count = int(random.random() + 0.5)
 		gridDim = obj['grid'].getDim()
 		for _ in range(count):
 			while True:

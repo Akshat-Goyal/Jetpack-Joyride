@@ -36,6 +36,7 @@ class Board:
 				self.fillGrid(obj, 1)
 		obj['beam'].changeY()
 		obj['magnet'].changeY()
+		obj['boost'].changeY()
 		self._curCol += 1
 		self._board[:, :2 * self._breadth - self._curCol] = self._board[:, 1:2 * self._breadth - self._curCol + 1]
 		self._curCol %= self._breadth

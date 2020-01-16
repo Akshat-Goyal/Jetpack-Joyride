@@ -10,7 +10,7 @@ class Barry(Person):
 		self._maxLive = lives
 		self._lives = lives
 		self._jumpCount = 0
-		self._gravity = 0.50
+		self._gravity = 0.25
 		self._maxShield = shieldPower
 		self._curShield = shieldPower
 		self._powerUpTime = powerUpTime
@@ -30,9 +30,9 @@ class Barry(Person):
 		dim = self._disp.shape
 		if not y:
 			self.checkCoin(obj)
-			ar = obj['beam'].checkCol(obj['barry'].getXY()[0], obj['barry'].getXY()[1], obj['barry'].getDisp())
-			obj['beam'].removeFireBeam(ar, obj)
-			if len(ar) and not self._shieldActivated:
+			obj['boost'].checkBoost(obj)
+			isCol = obj['beam'].checkCol(obj)
+			if isCol and not self._shieldActivated:
 				self._lives -= 1
 			if not self._lives:
 				obj['grid'].gameOver()
@@ -47,9 +47,9 @@ class Barry(Person):
 				else:
 					self._y += left
 				self.checkCoin(obj)
-				ar = obj['beam'].checkCol(obj['barry'].getXY()[0], obj['barry'].getXY()[1], obj['barry'].getDisp())
-				obj['beam'].removeFireBeam(ar, obj)
-				if len(ar) and not self._shieldActivated:
+				obj['boost'].checkBoost(obj)
+				isCol = obj['beam'].checkCol(obj)
+				if isCol and not self._shieldActivated:
 					self._lives -= 1
 				if not self._lives:
 					obj['grid'].gameOver()
@@ -112,5 +112,5 @@ class Barry(Person):
 	def gravity(self, obj):
 		if self.onGround(obj):
 			return
-		self._jumpCount += 0.5
+		self._jumpCount += 1
 		self.jump(math.floor(self._gravity * self._jumpCount), obj)

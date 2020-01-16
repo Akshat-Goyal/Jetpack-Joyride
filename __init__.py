@@ -3,6 +3,7 @@ from board import Board
 from barry import Barry
 from coin import Coin
 from magnet import Magnet
+from boost import speed_boost
 from fireBeams import FireBeam
 import os
 import time
@@ -11,12 +12,14 @@ if __name__ == "__main__":
 	os.system('clear')
 	grid = Board(40, 60, 5)
 	barry = Barry(grid.getDim(), 2, 10, 60)
+	boost = speed_boost(10)
 	coin = Coin()
 	beam = FireBeam()
 	magnet = Magnet()
-	obj = {'grid': grid, 'barry': barry, 'coin': coin, 'beam': beam, 'magnet': magnet}
+	obj = {'grid': grid, 'barry': barry, 'coin': coin, 'beam': beam, 'magnet': magnet, 'boost': boost}
 	coin.drawCoin(obj, 0)
 	beam.drawFireBeams(obj, 0)
+	boost.drawBoost(obj, 0)
 	magnet.makeMagnet(obj, 0)
 	barry.drawPerson(obj)
 	grid.printBoard()
@@ -31,12 +34,15 @@ if __name__ == "__main__":
 	while(True):
 		if current_milli_time() - prev_time > milis_per_frame:
 			grid.shift(obj)
+			if boost.isBoostOn():
+				grid.shift(obj)
 			prev_time = current_milli_time()
 
 		ch = input_to(getch)
 		barry.render(obj)
 		barry.checkShield()
 		magnet.checkMagnet(obj)
+		boost.checkBoostT()
 		if ch != 'w':
 			barry.gravity(obj)
 		if ch == ' ':

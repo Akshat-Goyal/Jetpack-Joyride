@@ -18,29 +18,34 @@ class FireBeam(Obstacle):
 		for i in ar:
 			self._arr.remove(i)
 
-	def checkCol(self, x, y, disp):
+	def checkCol(self, obj):
 		ar = []
+		x = obj['barry'].getXY()[0]
+		y = obj['barry'].getXY()[1]
+		bDisp = obj['barry'].getDisp()
+		bDim = bDisp.shape
 		for i in self._arr:
-			if y + disp.shape[1] <= i[0][1] or i[0][1] + self._disp[i[1]].shape[1] <= y:
+			if y + bDim[1] <= i[0][1] or i[0][1] + self._disp[i[1]].shape[1] <= y:
 				continue
-			if x >= i[0][0] + self._disp[i[1]].shape[0] or i[0][0] >= x + disp.shape[0]:
+			if x >= i[0][0] + self._disp[i[1]].shape[0] or i[0][0] >= x + bDim[0]:
 				continue
 			for j in range(self._disp[i[1]].shape[0]):
 				br = 0
 				for k in range(self._disp[i[1]].shape[1]):
 					if self._disp[i[1]][j][k] ==  ' ':
 						continue
-					if i[0][0] + j - x < 0 or i[0][0] + j - x >= disp.shape[0]:
+					if i[0][0] + j - x < 0 or i[0][0] + j - x >= bDim[0]:
 						continue
-					if i[0][1] + k - y < 0 or i[0][1] + k - y >= disp.shape[1]:
+					if i[0][1] + k - y < 0 or i[0][1] + k - y >= bDim[1]:
 						continue
-					if disp[i[0][0] + j - x][i[0][1] + k - y] != ' ':
+					if bDisp[i[0][0] + j - x][i[0][1] + k - y] != ' ':
 						ar.append(i)
 						br = 1
 						break
 				if br:
 					break
-		return ar
+		self.removeFireBeam(ar, obj)
+		return len(ar) > 0
 
 	def removeFireBeam(self, ar, obj):
 		for i in ar:
