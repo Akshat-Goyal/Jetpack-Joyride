@@ -16,22 +16,12 @@ class Barry(Person):
 		self._powerUpTime = powerUpTime
 		self._shieldActivated = 0
 
-	def checkCoin(self, obj):
-		dim = self._disp.shape
-		for i in range(dim[0]):
-			for j in range(dim[1]):
-				if self._disp[i][j] == ' ':
-					continue
-				if obj['grid'].getBoardXY(i + self._x, j + self._y) == obj['coin'].getDisp():
-					obj['grid'].setBoardXY(i + self._x, j + self._y, ' ')
-					self._score += 1
-
 	def move(self, y, obj):
 		dim = self._disp.shape
 		if not y:
-			self.checkCoin(obj)
-			obj['boost'].checkBoost(obj)
-			isCol = obj['beam'].checkCol(obj)
+			self._score += obj['coin'].checkCoin(self._x, self._y, self._disp, obj)
+			obj['boost'].checkBoost(self._x, self._y, self._disp, obj)
+			isCol = obj['beam'].checkCol(self._x, self._y, self._disp, obj)
 			if isCol and not self._shieldActivated:
 				self._lives -= 1
 			if not self._lives:
@@ -46,9 +36,9 @@ class Barry(Person):
 					self._y = gridDim[1][0]
 				else:
 					self._y += left
-				self.checkCoin(obj)
-				obj['boost'].checkBoost(obj)
-				isCol = obj['beam'].checkCol(obj)
+				self._score += obj['coin'].checkCoin(self._x, self._y, self._disp, obj)
+				obj['boost'].checkBoost(self._x, self._y, self._disp, obj)
+				isCol = obj['beam'].checkCol(self._x, self._y, self._disp, obj)
 				if isCol and not self._shieldActivated:
 					self._lives -= 1
 				if not self._lives:

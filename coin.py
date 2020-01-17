@@ -9,6 +9,18 @@ class Coin:
 	def getDisp(self):
 		return self._chCoin
 
+	def checkCoin(self, x, y, disp, obj):
+		dim = disp.shape
+		score = 0
+		for i in range(dim[0]):
+			for j in range(dim[1]):
+				if disp[i][j] == ' ':
+					continue
+				if obj['grid'].getBoardXY(i + x, j + y) == self._chCoin:
+					obj['grid'].setBoardXY(i + x, j + y, ' ')
+					score += 1
+		return score
+
 	def drawCoin(self, obj, frameNo):
 		count = int(random.random() * 10 + 5)
 		gridDim = obj['grid'].getDim()

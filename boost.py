@@ -31,27 +31,24 @@ class speed_boost:
 		for i in ar:
 			self._arr.remove(i)
 
-	def checkBoost(self, obj):
+	def checkBoost(self, x, y, disp, obj):
 		ar = []
-		x = obj['barry'].getXY()[0]
-		y = obj['barry'].getXY()[1]
-		bDisp = obj['barry'].getDisp()
-		bDim = bDisp.shape
+		dim = disp.shape
 		for i in self._arr:
-			if y + bDim[1] <= i[1] or i[1] + self._disp.shape[1] <= y:
+			if y + dim[1] <= i[1] or i[1] + self._disp.shape[1] <= y:
 				continue
-			if x >= i[0] + self._disp.shape[0] or i[0] >= x + bDim[0]:
+			if x >= i[0] + self._disp.shape[0] or i[0] >= x + dim[0]:
 				continue
 			for j in range(self._disp.shape[0]):
 				br = 0
 				for k in range(self._disp.shape[1]):
 					if self._disp[j][k] ==  ' ':
 						continue
-					if i[0] + j - x < 0 or i[0] + j - x >= bDim[0]:
+					if i[0] + j - x < 0 or i[0] + j - x >= dim[0]:
 						continue
-					if i[1] + k - y < 0 or i[1] + k - y >= bDim[1]:
+					if i[1] + k - y < 0 or i[1] + k - y >= dim[1]:
 						continue
-					if bDisp[i[0] + j - x][i[1] + k - y] != ' ':
+					if disp[i[0] + j - x][i[1] + k - y] != ' ':
 						ar.append(i)
 						br = 1
 						break
@@ -61,6 +58,7 @@ class speed_boost:
 			self._boostOn = 1
 			self._boostTime = 0
 			self.removeBoost(ar, obj)
+		return len(ar) > 0
 
 	def removeBoost(self, ar, obj):
 		for i in ar:

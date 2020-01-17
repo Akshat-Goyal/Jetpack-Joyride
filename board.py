@@ -48,6 +48,7 @@ class Board:
 		obj['coin'].drawCoin(obj, frameNo)
 		obj['beam'].drawFireBeams(obj, frameNo)
 		obj['magnet'].makeMagnet(obj, frameNo)
+		obj['boost'].drawBoost(obj, frameNo)
 		
 	def setBoardXY(self, x, y, ch):
 		self._board[x][y] = ch
