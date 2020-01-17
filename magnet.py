@@ -7,16 +7,46 @@ class Magnet(Obstacle):
 		self._disp = np.array([['M']])
 		self._arr = set()
 
-	def changeY(self):
-		ar = []
+	def changeY(self, obj):
 		tmp = set()
 		for i in self._arr:
-			tmp.add((i[0], i[1] - 1))
-			if i[1] < 1:
-				ar.append((i[0], i[1] - 1))
+			if i[1] >= 1:
+				tmp.add((i[0], i[1] - 1))
 		self._arr = tmp
+
+	def checkCol(self, x, y, disp, obj):
+		ar = []
+		dim = disp.shape
+		for i in self._arr:
+			if y + dim[1] <= i[1] or i[1] + self._disp.shape[1] <= y:
+				continue
+			if x >= i[0] + self._disp.shape[0] or i[0] >= x + dim[0]:
+				continue
+			for j in range(self._disp.shape[0]):
+				br = 0
+				for k in range(self._disp.shape[1]):
+					if self._disp[j][k] ==  ' ':
+						continue
+					if i[0] + j - x < 0 or i[0] + j - x >= dim[0]:
+						continue
+					if i[1] + k - y < 0 or i[1] + k - y >= dim[1]:
+						continue
+					if disp[i[0] + j - x][i[1] + k - y] != ' ':
+						ar.append(i)
+						br = 1
+						break
+				if br:
+					break
+		self.removeMagnet(ar, obj)
+		return len(ar) > 0
+
+	def removeMagnet(self, ar, obj):
 		for i in ar:
 			self._arr.remove(i)
+			for j in range(self._disp.shape[0]):
+				for k in range(self._disp.shape[1]):
+					if self._disp[j][k] != ' ':
+						obj['grid'].setBoardXY(j + i[0], k + i[1], ' ')
 
 	def checkMagnet(self, obj):
 		l = 0

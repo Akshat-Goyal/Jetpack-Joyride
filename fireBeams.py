@@ -7,16 +7,13 @@ class FireBeam(Obstacle):
 		self._disp = np.array([np.array([['_', '_']]), np.array([['|'], ['|']]), np.array([[' ', '/'], ['/', ' ']]), np.array([['\\', ' '], [' ', '\\']])])
 		self._arr = set()
 
-	def changeY(self):
-		ar = []
+	def changeY(self, obj):
 		tmp = set()
 		for i in self._arr:
 			tmp.add(((i[0][0], i[0][1] - 1), i[1]))
-			if i[0][1] < 1:
-				ar.append(((i[0][0], i[0][1] - 1), i[1]))
+			if i[0][1] >= 1:
+				tmp.add(((i[0][0], i[0][1] - 1), i[1]))
 		self._arr = tmp
-		for i in ar:
-			self._arr.remove(i)
 
 	def checkCol(self, x, y, disp, obj):
 		ar = []

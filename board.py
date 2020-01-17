@@ -28,19 +28,22 @@ class Board:
 		if not self._frame:
 			return
 		obj['barry'].render(obj)
+		obj['bullet'].render(obj)
 		if not self._curCol:
 			self._frame -= 1
 			if not self._frame:				
 				self.fillGrid(obj, 1)
 			else:
 				self.fillGrid(obj, 1)
-		obj['beam'].changeY()
-		obj['magnet'].changeY()
-		obj['boost'].changeY()
+		obj['beam'].changeY(obj)
+		obj['magnet'].changeY(obj)
+		obj['boost'].changeY(obj)
+		obj['bullet'].changeY(0, obj)
 		self._curCol += 1
 		self._board[:, :2 * self._breadth - self._curCol] = self._board[:, 1:2 * self._breadth - self._curCol + 1]
 		self._curCol %= self._breadth
 		obj['barry'].move(0, obj)
+		obj['bullet'].drawBullet(obj)
 		obj['barry'].drawPerson(obj)
 
 	def fillGrid(self, obj, frameNo):

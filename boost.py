@@ -1,7 +1,7 @@
 import numpy as np
 import random
 
-class speed_boost:
+class SpeedBoost:
 
 	def __init__(self, boostTime):
 		self._disp = np.array([['2']])
@@ -20,16 +20,12 @@ class speed_boost:
 				self._curTime = 0
 				self._boostOn = 0 
 
-	def changeY(self):
-		ar = []
+	def changeY(self, obj):
 		tmp = set()
 		for i in self._arr:
-			tmp.add((i[0], i[1] - 1))
-			if i[1] < 1:
-				ar.append((i[0], i[1] - 1))
+			if i[1] >= 1:
+				tmp.add((i[0], i[1] - 1))
 		self._arr = tmp
-		for i in ar:
-			self._arr.remove(i)
 
 	def checkBoost(self, x, y, disp, obj):
 		ar = []
