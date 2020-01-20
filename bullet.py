@@ -1,8 +1,11 @@
 import numpy as np
+import colorama
+from colorama import Back, Fore, Style
 
 class Bullet:
 	def __init__(self):
-		self._disp = np.array([['B']])
+		self._disp = np.array([[':', ':', ':']])
+		self._col = Fore.MAGENTA + Back.BLACK
 		self._arr = set()
 
 	def objCol(self, x, y, obj):
@@ -16,6 +19,33 @@ class Bullet:
 			if obj['boss'].isBossReady():
 				isCol |= obj['boss'].checkCol(x, y, self._disp, obj, True)
 		return isCol
+
+	def checkCol(self, x, y, disp, obj):
+		dim = disp.shape
+		ar = []
+		for i in self._arr:
+			br = 0
+			if y + dim[1] <= i[1] or i[1] + self._disp.shape[1] <= y:
+				return False
+			if x >= i[0] + self._disp.shape[0] or i[0] >= x + dim[0]:
+				return False
+			for j in range(self._disp.shape[0]):
+				for k in range(self._disp.shape[1]):
+					if self._disp[j][k] ==  ' ':
+						continue
+					if i[0] + j - x < 0 or i[0] + j - x >= dim[0]:
+						continue
+					if i[1] + k - y < 0 or i[1] + k - y >= dim[1]:
+						continue
+					if disp[i[0] + j - x][i[1] + k - y] != ' ':
+						ar.append(i)
+						br = 1
+						break
+				if br:
+					break
+		for i in ar:
+			self._arr.remove(i)
+		return len(ar) > 0
 
 	def changeY(self, y, obj):
 		tmp = set()
@@ -35,7 +65,7 @@ class Bullet:
 			for j in range(dim[0]):
 				for k in range(dim[1]):
 					if self._disp[j][k] != ' ':
-						obj['grid'].setBoardXY(i[0] + j, i[1] + k, self._disp[j][k])
+						obj['grid'].setBoardXY(i[0] + j, i[1] + k, self._col + self._disp[j][k])
 
 	def render(self, obj):
 		dim = self._disp.shape
@@ -43,7 +73,7 @@ class Bullet:
 			for j in range(dim[0]):
 				for k in range(dim[1]):
 					if self._disp[j][k] != ' ':
-						obj['grid'].setBoardXY(i[0] + j, i[1] + k, ' ')
+						obj['grid'].setBoardXY(i[0] + j, i[1] + k, obj['grid'].getCol() + ' ')
 		
 
 	def makeWeapon(self, x, y, obj):

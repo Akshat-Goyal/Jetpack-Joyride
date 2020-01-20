@@ -1,10 +1,13 @@
 import random
 import numpy as np
+import colorama
+from colorama import Fore, Back, Style
 
 class Coin:
 	def __init__(self):
-		self._chCoin = '$'
-		self._disp = np.array([['$', '$', '$', ' '], [' ', '$', '$', '$']])
+		self._col =  Back.BLACK + Fore.YELLOW
+		self._chCoin = self._col + '$'
+		self._disp = np.array([['$', '$', '$', '$', '$']])
 
 	def getDisp(self):
 		return self._chCoin
@@ -17,16 +20,16 @@ class Coin:
 				if disp[i][j] == ' ':
 					continue
 				if obj['grid'].getBoardXY(i + x, j + y) == self._chCoin:
-					obj['grid'].setBoardXY(i + x, j + y, ' ')
+					obj['grid'].setBoardXY(i + x, j + y, obj['grid'].getCol() + ' ')
 					score += 1
 		return score
 
 	def drawCoin(self, obj, frameNo):
-		count = int(random.random() * 10 + 5)
+		count = int(random.random() * 5 + 5)
 		gridDim = obj['grid'].getDim()
 		for _ in range(count):
 			x = int(random.random() * (gridDim[0][1] - gridDim[0][0] - 1) + gridDim[0][0])
 			y = int(random.random() * (gridDim[1][1] - gridDim[1][0] - 1) + gridDim[1][0])
 			for i in range(x, min(x + self._disp.shape[0], gridDim[0][1])):
 				for j in range(y, min(y + self._disp.shape[1], gridDim[1][1])):
-					obj['grid'].setBoardXY(i, j + frameNo * gridDim[1][1], self._disp[i - x][j - y])
+					obj['grid'].setBoardXY(i, j + frameNo * gridDim[1][1], self._col + self._disp[i - x][j - y])

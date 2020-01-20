@@ -1,6 +1,9 @@
 from person import Person
 import numpy as np
 import math
+import colorama
+from colorama import Fore, Style, Back
+import time
 
 class Barry(Person):
 	def __init__(self, gridDim):
@@ -9,36 +12,46 @@ class Barry(Person):
 		self._y = gridDim[1][0]
 		self._maxLive = 10
 		self._lives = 10
-		Person.__init__(self, self._x, self._y, self._disp, self._maxLive)
+		Person.__init__(self, self._x, self._y, self._disp, self._maxLive, Fore.CYAN + Back.BLACK)
 		self._score = 0
 		self._jumpCount = 0
 		self._gravity = 0.25
-		self._maxShield = 10
-		self._curShield = 10
-		self._powerUpTime = 60
+		self._shieldTime = 10
+		self._curShieldTime = 0
+		self._shieldPowerUpTime = 60
 		self._shieldActivated = 0
 
+	def isShieldActivated(self):
+		return self._shieldActivated == 1
 
 	def activateShield(self):
-		if not self._shieldActivated and self._curShield == self._maxShield:
+		if not self._shieldActivated: 
 			self._shieldActivated = 1
+			self._curShieldTime = int(round(time.time()))
 
 	def checkShield(self):
-		if self._shieldActivated:
-			self._curShield -= 1
-			if not self._curShield:
+		if self._shieldActivated == 1:
+			if int(round(time.time())) - self._curShieldTime > self._shieldTime:
+				self._curShieldTime = int(round(time.time()))
+				self._shieldActivated = 2
+		elif self._shieldActivated == 2:
+			if int(round(time.time())) - self._curShieldTime > self._shieldPowerUpTime:
+				self._curShieldTime = 0
 				self._shieldActivated = 0
-				self._curShield -= self._powerUpTime
-		elif self._curShield < 0:
-			self._curShield += 1
-			if not self._curShield:
-				self._curShield = self._maxShield 
 
 	def getShieldPower(self):
-		if self._curShield > 0:
-			return int(self._curShield * 100 / self._maxShield)
-		else:
+		if self._shieldActivated == 1:
+			return int((self._shieldTime - int(round(time.time())) + self._curShieldTime) / self._shieldTime * 100)
+		elif self._shieldActivated == 2:
 			return 0
+		else:
+			return 100
+
+	def lossLive(self, obj):
+		if self._shieldActivated != 1:
+			self._lives -= 1
+		if not self._lives:
+			obj['grid'].gameOver()
 
 	def getScore(self):
 		return self._score
@@ -62,7 +75,8 @@ class Barry(Person):
 				if i[1] + k - y < 0 or i[1] + k - y >= dim[1]:
 					continue
 				if disp[i[0] + j - x][i[1] + k - y] != ' ':
-					self._lives -= 1
+					if self._shieldActivated != 1:
+						self._lives -= 1
 					if not self._lives:
 						obj['grid'].gameOver()
 					return True
@@ -72,7 +86,7 @@ class Barry(Person):
 		self._score += obj['coin'].checkCol(self._x, self._y, self._disp, obj)
 		obj['speedBoost'].checkCol(self._x, self._y, self._disp, obj, True)
 		isCol = obj['beam'].checkCol(self._x, self._y, self._disp, obj)
-		if isCol and not self._shieldActivated:
+		if isCol and self._shieldActivated != 1:
 			self._lives -= 1
 		if not self._lives:
 			obj['grid'].gameOver()

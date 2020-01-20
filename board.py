@@ -1,5 +1,7 @@
 import numpy as np
 import sys
+import colorama
+from colorama import Fore, Back, Style
 
 class Board:
 	''' contains the design of board '''
@@ -8,11 +10,11 @@ class Board:
 		self._length = length
 		self._breadth = breadth
 		self._frame = frame
-		self._board = np.zeros((self._length, 2 * self._breadth), str)
-		self._board[:] = " "
-		self._sky = np.array([['#'], ['#']])
-		self._ground = np.array([['x'], ['x']])
-		self._wall = '#'
+		self._col = Back.BLACK + Fore.BLACK
+		self._board = np.zeros((self._length, 2 * self._breadth), dtype = object)
+		self._board[:] = self._col + " "
+		self._sky = np.array([[Back.BLUE + Fore.BLUE + '#'], [Back.BLUE + Fore.BLUE + '#']])
+		self._ground = np.array([[Back.GREEN + Fore.GREEN + 'x'], [Back.GREEN + Fore.GREEN + 'x']])
 		self._curCol = 0
 		self.createBoundry()
 
@@ -31,7 +33,7 @@ class Board:
 
 		if not self._curCol:
 			self._frame -= 1
-			self._board[self._sky.shape[0]:self._length - self._ground.shape[0], self._breadth:] = ' '
+			self._board[self._sky.shape[0]:self._length - self._ground.shape[0], self._breadth:] = self._col + ' '
 			obj['coin'].drawCoin(obj, 1)
 			obj['beam'].drawObstacle(obj, 1)
 			obj['magnet'].makeMagnet(obj, 1)
@@ -61,6 +63,9 @@ class Board:
 	def getDim(self):
 		return [[self._sky.shape[0], self._length - self._ground.shape[0]], [0, self._breadth]]
 
+	def getCol(self):
+		return self._col
+
 	def gameOver(self):
 		print("Game Over")
 		sys.exit(0)
@@ -69,8 +74,7 @@ class Board:
 		print("\033[0;0f", end="")
 		st = ''
 		for i in range(self._length):
-			st += self._wall + " " + self._wall + " "
 			for j in range(self._breadth):
-				st += self._board[i][j] + " "
-			st += self._wall + " " + self._wall + '\n'
+				st += self._board[i][j]
+			st += '\n'
 		print(st)

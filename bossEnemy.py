@@ -1,14 +1,16 @@
 import numpy as np
 from person import Person
+import colorama
+from colorama import Fore, Style, Back
 
 class BossEnemy(Person):
 	def __init__(self, gridDim):
 		self._disp = np.array([['B', 'B'], ['O', 'O'], ['S', 'S'], ['S', 'S']])
-		self._x = gridDim[0][1] - self._disp.shape[0]
+		self._x = None
 		self._y = gridDim[1][1] - self._disp.shape[1]
 		self._maxLive = 10
 		self._lives = 10
-		Person.__init__(self, self._x, self._y, self._disp, self._maxLive)
+		Person.__init__(self, self._x, self._y, self._disp, self._maxLive, Fore.MAGENTA + Back.BLACK)
 		self._isReady = 0
 
 	def isBossReady(self):
@@ -39,10 +41,13 @@ class BossEnemy(Person):
 	def checkBoss(self, obj):
 		self._isReady = 1
 		bXY = obj['barry'].getXY()
+		x = self._x
 		if bXY[0] + self._disp.shape[0] > obj['grid'].getDim()[0][1]:
 			self._x = obj['grid'].getDim()[0][1] - self._disp.shape[0]
 		else:
 			self._x = bXY[0]
+		if x == self._x:
+			return
 
 		obj['iceBall'].makeWeapon(self._x + int((self._disp.shape[0] - 1) / 2), self._y + self._disp.shape[1], obj)
 		obj['beam'].checkCol(self._x, self._y, self._disp, obj)

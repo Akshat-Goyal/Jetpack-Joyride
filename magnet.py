@@ -1,11 +1,13 @@
 import numpy as np
-from obstacle import Obstacle
 import random
+import colorama
+from colorama import Back, Fore, Style
 
-class Magnet(Obstacle):
+class Magnet:
 	def __init__(self):
-		self._disp = np.array([['M']])
-		Obstacle.__init__(self, self._disp)
+		self._disp = np.array([[':', ':', ':'], [':', ':', ':']])
+		self._col = Back.RED + Fore.RED
+		self._arr = set()
 
 	def changeY(self, obj):
 		tmp = set()
@@ -46,7 +48,7 @@ class Magnet(Obstacle):
 			for j in range(self._disp.shape[0]):
 				for k in range(self._disp.shape[1]):
 					if self._disp[j][k] != ' ':
-						obj['grid'].setBoardXY(j + i[0], k + i[1], ' ')
+						obj['grid'].setBoardXY(j + i[0], k + i[1], obj['grid'].getCol() + ' ')
 
 	def checkMagnet(self, obj):
 		l = 0
@@ -65,6 +67,7 @@ class Magnet(Obstacle):
 				l -= 1
 			if i[1] + self._disp.shape[1] > y + bDim[1]:
 				l += 1
+		l *= 2
 		while l | u:
 			if l:
 				obj['barry'].move(l / abs(l), obj)
@@ -83,7 +86,7 @@ class Magnet(Obstacle):
 			for j in range(self._disp.shape[0]):
 				for k in range(self._disp.shape[1]):
 					if self._disp[j][k] != ' ':
-						obj['grid'].setBoardXY(j + x, k + y, self._disp[j][k])
+						obj['grid'].setBoardXY(j + x, k + y, self._col + self._disp[j][k])
 
 	def makeMagnet(self, obj, frameNo):
 		count = int(random.random() + 0.25)
@@ -97,7 +100,7 @@ class Magnet(Obstacle):
 					for k in range(self._disp.shape[1]):
 						if self._disp[j][k] ==  ' ':
 							continue
-						if obj['grid'].getBoardXY(x + j, y + k) != ' ' and obj['grid'].getBoardXY(x + j, y + k) != obj['coin'].getDisp():
+						if obj['grid'].getBoardXY(x + j, y + k) != obj['grid'].getCol() + ' ' and obj['grid'].getBoardXY(x + j, y + k) != obj['coin'].getDisp():
 							flag = 1
 							break
 					if flag:
@@ -107,5 +110,5 @@ class Magnet(Obstacle):
 					for i in range(self._disp.shape[0]):
 						for j in range(self._disp.shape[1]):
 							if self._disp[i][j] != ' ':
-								obj['grid'].setBoardXY(i + x, j + y + frameNo * gridDim[1][1], self._disp[i][j])
+								obj['grid'].setBoardXY(i + x, j + y + frameNo * gridDim[1][1], self._col + self._disp[i][j])
 					break

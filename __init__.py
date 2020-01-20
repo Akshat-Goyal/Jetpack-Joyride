@@ -10,11 +10,13 @@ from iceBall import IceBall
 from bullet import Bullet
 import os
 import time
+import colorama
 
 
 if __name__ == "__main__":
+	colorama.init(autoreset=True)
 	os.system('clear')
-	grid = Board(40, 60, 5)
+	grid = Board(40, 120, 5)
 	barry = Barry(grid.getDim())
 	speedBoost = SpeedBoost()
 	coin = Coin()
@@ -34,7 +36,7 @@ if __name__ == "__main__":
 	grid.printBoard()
 	print("Score: " + str(barry.getScore()))
 	print("Live: " + str(barry.getLive()))
-	print("Shield Power:" + str(barry.getShieldPower()) + " ")
+	print("Shield Power:" + str(barry.getShieldPower()) + "  ")
 
 	current_milli_time = lambda: int(round(time.time() * 1000))
 	prev_time = current_milli_time()
@@ -45,7 +47,9 @@ if __name__ == "__main__":
 		isBossReady = 0
 		if current_milli_time() - prev_time > milis_per_frame:
 			isBossReady |= grid.shift(obj)
+			isBossReady |= grid.shift(obj)
 			if speedBoost.isBoostOn():
+				isBossReady |= grid.shift(obj)
 				isBossReady |= grid.shift(obj)
 			prev_time = current_milli_time()
 
@@ -55,9 +59,9 @@ if __name__ == "__main__":
 		if isBossReady:
 			boss.render(obj)
 		iceBall.render(obj)
-		iceBall.changeY(obj)
 		bullet.changeY(2, obj)
 		barry.checkShield()
+		iceBall.changeY(obj)
 		magnet.checkMagnet(obj)
 		speedBoost.checkBoostTime()
 
@@ -88,6 +92,6 @@ if __name__ == "__main__":
 		grid.printBoard()
 		print("Score: " + str(barry.getScore()))
 		print("Live: " + str(barry.getLive()))
-		print("Shield Power:" + str(barry.getShieldPower()) + " ")
+		print("Shield Power:" + str(barry.getShieldPower()) + "  ")
 		if isBossReady:
 			print("Boss Enemy:" + str(boss.getLive()) + " ")

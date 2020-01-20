@@ -1,11 +1,13 @@
 import numpy as np
-from obstacle import Obstacle
 import random
+import colorama
+from colorama import Fore, Back, Style
 
-class FireBeam(Obstacle):
+class FireBeam:
 	def __init__(self):
-		self._disp = np.array([np.array([['_', '_']]), np.array([['|'], ['|']]), np.array([[' ', '/'], ['/', ' ']]), np.array([['\\', ' '], [' ', '\\']])])
-		Obstacle.__init__(self, self._disp)
+		self._disp = [np.array([['_', '_', '_', '_']]), np.array([['|'], ['|'], ['|'], ['|']]), np.array([[' ', ' ', ' ', '/'], [' ', ' ', '/', ' '], [' ', '/', ' ', ' '], ['/', ' ', ' ', ' ']]), np.array([['\\', ' ', ' ', ' '], [' ', '\\', ' ', ' '], [' ', ' ', '\\', ' '], [' ', ' ', ' ', '\\']])]
+		self._col = Fore.YELLOW + Back.YELLOW
+		self._arr = set()
 
 	def changeY(self, obj):
 		tmp = set()
@@ -47,7 +49,7 @@ class FireBeam(Obstacle):
 			for j in range(self._disp[i[1]].shape[0]):
 				for k in range(self._disp[i[1]].shape[1]):
 					if self._disp[i[1]][j][k] != ' ':
-						obj['grid'].setBoardXY(j + i[0][0], k + i[0][1], ' ')
+						obj['grid'].setBoardXY(j + i[0][0], k + i[0][1], obj['grid'].getCol() + ' ')
 
 	def drawObstacle(self, obj, frameNo):
 		count = int(random.random() * 5 + 2)
@@ -62,7 +64,7 @@ class FireBeam(Obstacle):
 					for k in range(self._disp[z].shape[1]):
 						if self._disp[z][j][k] ==  ' ':
 							continue
-						if obj['grid'].getBoardXY(x + j, y + k) != ' ' and obj['grid'].getBoardXY(x + j, y + k) != obj['coin'].getDisp():
+						if obj['grid'].getBoardXY(x + j, y + k) != obj['grid'].getCol() + ' ' and obj['grid'].getBoardXY(x + j, y + k) != obj['coin'].getDisp():
 							flag = 1
 							break
 					if flag:
@@ -72,5 +74,5 @@ class FireBeam(Obstacle):
 					for i in range(self._disp[z].shape[0]):
 						for j in range(self._disp[z].shape[1]):
 							if self._disp[z][i][j] != ' ':
-								obj['grid'].setBoardXY(i + x, j + y + frameNo * gridDim[1][1], self._disp[z][i][j])
+								obj['grid'].setBoardXY(i + x, j + y + frameNo * gridDim[1][1],self._col + self._disp[z][i][j])
 					break

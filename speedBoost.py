@@ -1,9 +1,12 @@
 import numpy as np
 import random
+import colorama
+from colorama import Back, Fore, Style
 
 class SpeedBoost:
 	def __init__(self):
-		self._disp = np.array([['2']])
+		self._disp = np.array([[' ', '-', ' '], ['|', '2', '|'], [' ', '-', ' ']])
+		self._col = Back.BLACK + Fore.GREEN
 		self._arr = set()
 		self._boostTime = 10
 		self._curTime = 0
@@ -62,10 +65,10 @@ class SpeedBoost:
 			for j in range(self._disp.shape[0]):
 				for k in range(self._disp.shape[1]):
 					if self._disp[j][k] != ' ':
-						obj['grid'].setBoardXY(j + i[0], k + i[1], ' ')
+						obj['grid'].setBoardXY(j + i[0], k + i[1], obj['grid'].getCol() +  ' ')
 
 	def drawBoost(self, obj, frameNo):
-		count = int(random.random() + 0.5)
+		count = int(random.random() + 0.25)
 		gridDim = obj['grid'].getDim()
 		for _ in range(count):
 			while True:
@@ -76,7 +79,7 @@ class SpeedBoost:
 					for k in range(self._disp.shape[1]):
 						if self._disp[j][k] ==  ' ':
 							continue
-						if obj['grid'].getBoardXY(x + j, y + k) != ' ' and obj['grid'].getBoardXY(x + j, y + k) != obj['coin'].getDisp():
+						if obj['grid'].getBoardXY(x + j, y + k) != obj['grid'].getCol() + ' ' and obj['grid'].getBoardXY(x + j, y + k) != obj['coin'].getDisp():
 							flag = 1
 							break
 					if flag:
@@ -86,5 +89,5 @@ class SpeedBoost:
 					for i in range(self._disp.shape[0]):
 						for j in range(self._disp.shape[1]):
 							if self._disp[i][j] != ' ':
-								obj['grid'].setBoardXY(i + x, j + y + frameNo * gridDim[1][1], self._disp[i][j])
+								obj['grid'].setBoardXY(i + x, j + y + frameNo * gridDim[1][1], self._col + self._disp[i][j])
 					break
