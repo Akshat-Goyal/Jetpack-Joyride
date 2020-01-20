@@ -1,5 +1,4 @@
 import numpy as np
-from coin import Coin
 import sys
 
 class Board:
@@ -25,33 +24,33 @@ class Board:
 			self._board[max(0, self._length-self._ground.shape[0]):, i:min(i+self._ground.shape[1], 2*self._breadth)] = self._ground[max(0, self._ground.shape[0]-self._length):, :min(self._ground.shape[1], 2*self._breadth-i)]
 
 	def shift(self, obj):
-		if not self._frame:
-			return
+		if not self._frame and not self._curCol:
+			return True
 		obj['barry'].render(obj)
 		obj['bullet'].render(obj)
+
 		if not self._curCol:
 			self._frame -= 1
-			if not self._frame:				
-				self.fillGrid(obj, 1)
-			else:
-				self.fillGrid(obj, 1)
+			self._board[self._sky.shape[0]:self._length - self._ground.shape[0], self._breadth:] = ' '
+			obj['coin'].drawCoin(obj, 1)
+			obj['beam'].drawObstacle(obj, 1)
+			obj['magnet'].makeMagnet(obj, 1)
+			if self._frame:				
+				obj['speedBoost'].drawBoost(obj, 1)
+
 		obj['beam'].changeY(obj)
 		obj['magnet'].changeY(obj)
-		obj['boost'].changeY(obj)
-		obj['bullet'].changeY(0, obj)
+		obj['speedBoost'].changeY(obj)
+
 		self._curCol += 1
 		self._board[:, :2 * self._breadth - self._curCol] = self._board[:, 1:2 * self._breadth - self._curCol + 1]
 		self._curCol %= self._breadth
-		obj['barry'].move(0, obj)
-		obj['bullet'].drawBullet(obj)
-		obj['barry'].drawPerson(obj)
 
-	def fillGrid(self, obj, frameNo):
-		self._board[self._sky.shape[0]:self._length - self._ground.shape[0], frameNo * self._breadth:] = ' '
-		obj['coin'].drawCoin(obj, frameNo)
-		obj['beam'].drawFireBeams(obj, frameNo)
-		obj['magnet'].makeMagnet(obj, frameNo)
-		obj['boost'].drawBoost(obj, frameNo)
+		obj['bullet'].changeY(0, obj)
+		obj['barry'].move(0, obj)
+		obj['bullet'].drawWeapon(obj)
+		obj['barry'].drawPerson(obj)
+		return False		
 		
 	def setBoardXY(self, x, y, ch):
 		self._board[x][y] = ch

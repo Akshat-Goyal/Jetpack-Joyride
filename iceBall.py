@@ -1,32 +1,43 @@
 import numpy as np
+import random
 
-class Bullet:
+class IceBall:
 	def __init__(self):
-		self._disp = np.array([['B']])
+		self._disp = np.array([['S']])
 		self._arr = set()
 
 	def objCol(self, x, y, obj):
 		isCol = 0
-		isCol |= y + self._disp.shape[1] > obj['grid'].getDim()[1][1]
+		isCol |= x + self._disp.shape[0] > obj['grid'].getDim()[0][1]
+		isCol |= y < obj['grid'].getDim()[1][0]
 		if not isCol:
 			isCol |= obj['beam'].checkCol(x, y, self._disp, obj)
 			isCol |= obj['magnet'].checkCol(x, y, self._disp, obj)
-			isCol |= obj['speedBoost'].checkCol(x, y, self._disp, obj, False)
 			isCol |= obj['coin'].checkCol(x, y, self._disp, obj) > 0
-			if obj['boss'].isBossReady():
-				isCol |= obj['boss'].checkCol(x, y, self._disp, obj, True)
+			isCol |= obj['barry'].checkCol(x, y, self._disp, obj)
 		return isCol
 
-	def changeY(self, y, obj):
+	def changeY(self, obj):
 		tmp = set()
+		vy = int(random.random() * 1) + 1
+		vx = int(random.random() + 0.25)
 		for i in self._arr:
 			br = 0
-			for j in range(y + 1):
-				if self.objCol(i[0], i[1] + j, obj):
-					br = 1
-					break
+			j = 1
+			k = 1
+			while j <= vy or k <= vx:
+				if j <= vy:
+					if self.objCol(i[0], i[1] - j, obj):
+						br = 1
+						break
+					j += 1
+				if k <= vx:
+					if self.objCol(i[0] + k, i[1], obj):
+						br = 1
+						break
+					k += 1
 			if not br:
-				tmp.add((i[0], i[1] + y))
+				tmp.add((i[0] + vx, i[1] - vy))
 		self._arr = tmp
 
 	def drawWeapon(self, obj):

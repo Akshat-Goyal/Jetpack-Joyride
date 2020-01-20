@@ -9,7 +9,7 @@ class Coin:
 	def getDisp(self):
 		return self._chCoin
 
-	def checkCoin(self, x, y, disp, obj):
+	def checkCol(self, x, y, disp, obj):
 		dim = disp.shape
 		score = 0
 		for i in range(dim[0]):

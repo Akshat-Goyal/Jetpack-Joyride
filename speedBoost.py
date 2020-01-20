@@ -2,18 +2,17 @@ import numpy as np
 import random
 
 class SpeedBoost:
-
-	def __init__(self, boostTime):
+	def __init__(self):
 		self._disp = np.array([['2']])
 		self._arr = set()
-		self._boostTime = boostTime
+		self._boostTime = 10
 		self._curTime = 0
 		self._boostOn = 0
 
 	def isBoostOn(self):
 		return self._boostOn
 
-	def checkBoostT(self):
+	def checkBoostTime(self):
 		if self._boostOn:
 			self._curTime += 1
 			if self._curTime == self._boostTime:
@@ -23,11 +22,11 @@ class SpeedBoost:
 	def changeY(self, obj):
 		tmp = set()
 		for i in self._arr:
-			if i[1] >= 1:
+			if i[1] > obj['grid'].getDim()[1][0]:
 				tmp.add((i[0], i[1] - 1))
 		self._arr = tmp
 
-	def checkBoost(self, x, y, disp, obj):
+	def checkCol(self, x, y, disp, obj, On):
 		ar = []
 		dim = disp.shape
 		for i in self._arr:
@@ -51,8 +50,9 @@ class SpeedBoost:
 				if br:
 					break
 		if len(ar) > 0:
-			self._boostOn = 1
-			self._boostTime = 0
+			if On:
+				self._boostOn = 1
+				self._boostTime = 0
 			self.removeBoost(ar, obj)
 		return len(ar) > 0
 
@@ -79,6 +79,8 @@ class SpeedBoost:
 						if obj['grid'].getBoardXY(x + j, y + k) != ' ' and obj['grid'].getBoardXY(x + j, y + k) != obj['coin'].getDisp():
 							flag = 1
 							break
+					if flag:
+						break
 				if not flag:
 					self._arr.add((x, y + frameNo * gridDim[1][1]))
 					for i in range(self._disp.shape[0]):

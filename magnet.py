@@ -5,12 +5,12 @@ import random
 class Magnet(Obstacle):
 	def __init__(self):
 		self._disp = np.array([['M']])
-		self._arr = set()
+		Obstacle.__init__(self, self._disp)
 
 	def changeY(self, obj):
 		tmp = set()
 		for i in self._arr:
-			if i[1] >= 1:
+			if i[1] > obj['grid'].getDim()[1][0]:
 				tmp.add((i[0], i[1] - 1))
 		self._arr = tmp
 
@@ -37,10 +37,10 @@ class Magnet(Obstacle):
 						break
 				if br:
 					break
-		self.removeMagnet(ar, obj)
+		self.removeObstacle(ar, obj)
 		return len(ar) > 0
 
-	def removeMagnet(self, ar, obj):
+	def removeObstacle(self, ar, obj):
 		for i in ar:
 			self._arr.remove(i)
 			for j in range(self._disp.shape[0]):
@@ -74,7 +74,7 @@ class Magnet(Obstacle):
 				u = int((abs(u) - 1) * u / abs(u))
 
 
-	def drawMagnet(self, obj):
+	def drawObstacle(self, obj):
 		for i in self._arr:
 			if i[1] >= obj['grid'].getDim()[1][1]:
 				continue
@@ -100,6 +100,8 @@ class Magnet(Obstacle):
 						if obj['grid'].getBoardXY(x + j, y + k) != ' ' and obj['grid'].getBoardXY(x + j, y + k) != obj['coin'].getDisp():
 							flag = 1
 							break
+					if flag:
+						break
 				if not flag:
 					self._arr.add((x, y + frameNo * gridDim[1][1]))
 					for i in range(self._disp.shape[0]):

@@ -3,47 +3,21 @@ import numpy as np
 import math
 
 class Barry(Person):
-	def __init__(self, gridDim, lives, shieldPower, powerUpTime):
-		self._disp = np.array([[' ', '_', ' '], ['{', 'o', '}'], ['/', '_', '\\']])
-		Person.__init__(self, gridDim[0][1] - self._disp.shape[0], gridDim[1][0], self._disp)
+	def __init__(self, gridDim):
+		self._disp = np.array([['o', '-', 'o'], ['-', '|', '-'], ['/', ' ', '\\']])
+		self._x = gridDim[0][1] - self._disp.shape[0]
+		self._y = gridDim[1][0]
+		self._maxLive = 10
+		self._lives = 10
+		Person.__init__(self, self._x, self._y, self._disp, self._maxLive)
 		self._score = 0
-		self._maxLive = lives
-		self._lives = lives
 		self._jumpCount = 0
 		self._gravity = 0.25
-		self._maxShield = shieldPower
-		self._curShield = shieldPower
-		self._powerUpTime = powerUpTime
+		self._maxShield = 10
+		self._curShield = 10
+		self._powerUpTime = 60
 		self._shieldActivated = 0
 
-	def move(self, y, obj):
-		dim = self._disp.shape
-		if not y:
-			self._score += obj['coin'].checkCoin(self._x, self._y, self._disp, obj)
-			obj['boost'].checkBoost(self._x, self._y, self._disp, obj)
-			isCol = obj['beam'].checkCol(self._x, self._y, self._disp, obj)
-			if isCol and not self._shieldActivated:
-				self._lives -= 1
-			if not self._lives:
-				obj['grid'].gameOver()
-		else:		
-			left = int(y / abs(y))
-			gridDim = obj['grid'].getDim()
-			while y:
-				if self._y + left + dim[1] > gridDim[1][1]:
-					self._y = gridDim[1][1] - dim[1]
-				elif self._y + left < gridDim[1][0]:
-					self._y = gridDim[1][0]
-				else:
-					self._y += left
-				self._score += obj['coin'].checkCoin(self._x, self._y, self._disp, obj)
-				obj['boost'].checkBoost(self._x, self._y, self._disp, obj)
-				isCol = obj['beam'].checkCol(self._x, self._y, self._disp, obj)
-				if isCol and not self._shieldActivated:
-					self._lives -= 1
-				if not self._lives:
-					obj['grid'].gameOver()
-				y = (abs(y) - 1) * left
 
 	def activateShield(self):
 		if not self._shieldActivated and self._curShield == self._maxShield:
@@ -66,17 +40,58 @@ class Barry(Person):
 		else:
 			return 0
 
-	def getXY(self):
-		return [self._x, self._y]
-
-	def getDisp(self):
-		return self._disp
-
 	def getScore(self):
 		return self._score
 
-	def getLive(self):
-		return self._lives / self._maxLive * 100
+	def addScore(self, x):
+		self._score += x
+
+	def checkCol(self, x, y, disp, obj):
+		dim = disp.shape
+		i = (self._x, self._y)
+		if y + dim[1] <= i[1] or i[1] + self._disp.shape[1] <= y:
+			return False
+		if x >= i[0] + self._disp.shape[0] or i[0] >= x + dim[0]:
+			return False
+		for j in range(self._disp.shape[0]):
+			for k in range(self._disp.shape[1]):
+				if self._disp[j][k] ==  ' ':
+					continue
+				if i[0] + j - x < 0 or i[0] + j - x >= dim[0]:
+					continue
+				if i[1] + k - y < 0 or i[1] + k - y >= dim[1]:
+					continue
+				if disp[i[0] + j - x][i[1] + k - y] != ' ':
+					self._lives -= 1
+					if not self._lives:
+						obj['grid'].gameOver()
+					return True
+		return False
+
+	def objCol(self, obj):
+		self._score += obj['coin'].checkCol(self._x, self._y, self._disp, obj)
+		obj['speedBoost'].checkCol(self._x, self._y, self._disp, obj, True)
+		isCol = obj['beam'].checkCol(self._x, self._y, self._disp, obj)
+		if isCol and not self._shieldActivated:
+			self._lives -= 1
+		if not self._lives:
+			obj['grid'].gameOver()
+
+	def move(self, y, obj):
+		dim = self._disp.shape
+		if y:	
+			left = int(y / abs(y))
+			gridDim = obj['grid'].getDim()
+			while y:
+				if self._y + left + dim[1] > gridDim[1][1]:
+					self._y = gridDim[1][1] - dim[1]
+				elif self._y + left < gridDim[1][0]:
+					self._y = gridDim[1][0]
+				else:
+					self._y += left
+				self.objCol(obj)
+				y = (abs(y) - 1) * left
+		self.objCol(obj)
 
 	def jump(self, x, obj):
 		if x < 0:

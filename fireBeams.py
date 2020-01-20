@@ -5,13 +5,13 @@ import random
 class FireBeam(Obstacle):
 	def __init__(self):
 		self._disp = np.array([np.array([['_', '_']]), np.array([['|'], ['|']]), np.array([[' ', '/'], ['/', ' ']]), np.array([['\\', ' '], [' ', '\\']])])
-		self._arr = set()
+		Obstacle.__init__(self, self._disp)
 
 	def changeY(self, obj):
 		tmp = set()
 		for i in self._arr:
 			tmp.add(((i[0][0], i[0][1] - 1), i[1]))
-			if i[0][1] >= 1:
+			if i[0][1] > obj['grid'].getDim()[1][0]:
 				tmp.add(((i[0][0], i[0][1] - 1), i[1]))
 		self._arr = tmp
 
@@ -38,10 +38,10 @@ class FireBeam(Obstacle):
 						break
 				if br:
 					break
-		self.removeFireBeam(ar, obj)
+		self.removeObstacle(ar, obj)
 		return len(ar) > 0
 
-	def removeFireBeam(self, ar, obj):
+	def removeObstacle(self, ar, obj):
 		for i in ar:
 			self._arr.remove(i)
 			for j in range(self._disp[i[1]].shape[0]):
@@ -49,7 +49,7 @@ class FireBeam(Obstacle):
 					if self._disp[i[1]][j][k] != ' ':
 						obj['grid'].setBoardXY(j + i[0][0], k + i[0][1], ' ')
 
-	def drawFireBeams(self, obj, frameNo):
+	def drawObstacle(self, obj, frameNo):
 		count = int(random.random() * 5 + 2)
 		gridDim = obj['grid'].getDim()
 		for _ in range(count):
@@ -65,6 +65,8 @@ class FireBeam(Obstacle):
 						if obj['grid'].getBoardXY(x + j, y + k) != ' ' and obj['grid'].getBoardXY(x + j, y + k) != obj['coin'].getDisp():
 							flag = 1
 							break
+					if flag:
+						break
 				if not flag:
 					self._arr.add(((x, y + frameNo * gridDim[1][1]), z))
 					for i in range(self._disp[z].shape[0]):
