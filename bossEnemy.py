@@ -18,7 +18,7 @@ class BossEnemy(Person):
 		self._y = gridDim[1][1] - self._disp.shape[1]
 		self._lives = 10
 		self._livesLeft = 10
-		Person.__init__(self, self._x, self._y, self._disp, self._lives, Fore.MAGENTA + Back.BLACK)
+		Person.__init__(self, self._x, self._y, self._disp, Fore.MAGENTA + Back.BLACK)
 		self._isReady = 0
 
 	def get_isReady(self):

@@ -2,7 +2,7 @@ import colorama
 from colorama import Back, Fore, Style
 
 class Person:
-	def __init__(self, x, y, disp, lives, col):
+	def __init__(self, x, y, disp, col):
 		self._x = x
 		self._y = y
 		self._disp = disp

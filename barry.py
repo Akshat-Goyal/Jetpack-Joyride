@@ -14,7 +14,7 @@ class Barry(Person):
 		self._x = gridDim[0][1] - self._disp.shape[0]
 		self._y = gridDim[1][0]
 		self._lives = 10
-		Person.__init__(self, self._x, self._y, self._disp, 10, Fore.CYAN + Back.BLACK)
+		Person.__init__(self, self._x, self._y, self._disp, Fore.CYAN + Back.BLACK)
 		self._score = 0
 		self._jumpCount = 0
 		self._gravity = 0.25
