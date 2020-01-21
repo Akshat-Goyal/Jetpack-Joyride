@@ -34,40 +34,56 @@ class Board:
 		if not self._curCol:
 			self._frame -= 1
 			self._board[self._sky.shape[0]:self._length - self._ground.shape[0], self._breadth:] = self._col + ' '
-			obj['coin'].drawCoin(obj, 1)
+			obj['coin'].makeCoin(obj, 1)
 			obj['beam'].drawObstacle(obj, 1)
 			obj['magnet'].makeMagnet(obj, 1)
 			if self._frame:				
-				obj['speedBoost'].drawBoost(obj, 1)
-
-		obj['beam'].changeY(obj)
-		obj['magnet'].changeY(obj)
-		obj['speedBoost'].changeY(obj)
+				obj['dragonBoost'].makeBoost(obj, 1)
+				obj['speedBoost'].makeBoost(obj, 1)
 
 		self._curCol += 1
 		self._board[:, :2 * self._breadth - self._curCol] = self._board[:, 1:2 * self._breadth - self._curCol + 1]
 		self._curCol %= self._breadth
 
-		obj['bullet'].changeY(0, obj)
+		obj['coin'].set_XY(obj)
+		obj['beam'].set_XY(obj)
+		obj['magnet'].set_XY(obj)
+		obj['speedBoost'].set_XY(obj)
+		obj['dragonBoost'].set_XY(obj)
+
+		obj['barry'].checkShield()
+		obj['bullet'].set_XY(0, obj)
 		obj['barry'].move(0, obj)
+		obj['magnet'].checkMagnet(obj)
+
+		obj['coin'].drawCoin(obj)
+		obj['magnet'].drawObstacle(obj)
+		obj['speedBoost'].drawBoost(obj)
+		obj['dragonBoost'].drawBoost(obj)
 		obj['bullet'].drawWeapon(obj)
+		obj['barry'].changeDisp(obj)
+		obj['barry'].move(0, obj)
 		obj['barry'].drawPerson(obj)
 		return False		
 		
-	def setBoardXY(self, x, y, ch):
+	def set_XY(self, x, y, ch):
 		self._board[x][y] = ch
 	
-	def getBoardXY(self, x, y):
+	def get_XY(self, x, y):
 		return self._board[x][y]
 
-	def getDim(self):
+	def get_dim(self):
 		return [[self._sky.shape[0], self._length - self._ground.shape[0]], [0, self._breadth]]
 
-	def getCol(self):
+	def get_col(self):
 		return self._col
 
 	def gameOver(self):
 		print("Game Over")
+		sys.exit(0)
+
+	def gameWon(self):
+		print("Game Win")
 		sys.exit(0)
 
 	def printBoard(self):

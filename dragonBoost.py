@@ -2,30 +2,19 @@ import numpy as np
 import random
 import colorama
 from colorama import Back, Fore, Style
+import time
 
 class DragonBoost:
 	def __init__(self):
 		self._disp = np.array([[' ', '-', ' '], ['|', 'D', '|'], [' ', '-', ' ']])
-		self._col = Back.BLACK + Fore.MAGENTA
+		self._col = Back.BLACK + Fore.GREEN
 		self._arr = set()
-		self._boostTime = 10
-		self._curTime = 0
-		self._boostOn = 0
+		self._count  = 1
 
-	def isBoostOn(self):
-		return self._boostOn
-
-	def checkBoostTime(self):
-		if self._boostOn:
-			self._curTime += 1
-			if self._curTime == self._boostTime:
-				self._curTime = 0
-				self._boostOn = 0 
-
-	def changeY(self, obj):
+	def set_XY(self, obj):
 		tmp = set()
 		for i in self._arr:
-			if i[1] > obj['grid'].getDim()[1][0]:
+			if i[1] > obj['grid'].get_dim()[1][0]:
 				tmp.add((i[0], i[1] - 1))
 		self._arr = tmp
 
@@ -52,24 +41,36 @@ class DragonBoost:
 						break
 				if br:
 					break
-		if len(ar) > 0:
-			if On:
-				self._boostOn = 1
-				self._boostTime = 0
-			self.removeBoost(ar, obj)
+		if On and len(ar):
+			self._boostOn = 1
+		self.render(ar, obj)
 		return len(ar) > 0
 
-	def removeBoost(self, ar, obj):
+	def render(self, ar, obj):
 		for i in ar:
 			self._arr.remove(i)
 			for j in range(self._disp.shape[0]):
 				for k in range(self._disp.shape[1]):
 					if self._disp[j][k] != ' ':
-						obj['grid'].setBoardXY(j + i[0], k + i[1], obj['grid'].getCol() +  ' ')
+						obj['grid'].set_XY(j + i[0], k + i[1], obj['grid'].get_col() +  ' ')
 
-	def drawBoost(self, obj, frameNo):
-		count = int(random.random() + 0.25)
-		gridDim = obj['grid'].getDim()
+	def drawBoost(self, obj):
+		for i in self._arr:
+			if i[1] >= obj['grid'].get_dim()[1][1]:
+				continue
+			x = i[0]
+			y = i[1]
+			for j in range(self._disp.shape[0]):
+				for k in range(self._disp.shape[1]):
+					if self._disp[j][k] != ' ':
+						obj['grid'].set_XY(j + x, k + y, self._col + self._disp[j][k])
+
+	def makeBoost(self, obj, frameNo):
+		if not self._count:
+			return
+		self._count -= 1
+		count = int(random.random() + 0.5)
+		gridDim = obj['grid'].get_dim()
 		for _ in range(count):
 			while True:
 				x = int(random.random() * (gridDim[0][1] - gridDim[0][0] - self._disp.shape[0]) + gridDim[0][0])
@@ -79,15 +80,16 @@ class DragonBoost:
 					for k in range(self._disp.shape[1]):
 						if self._disp[j][k] ==  ' ':
 							continue
-						if obj['grid'].getBoardXY(x + j, y + k) != obj['grid'].getCol() + ' ' and obj['grid'].getBoardXY(x + j, y + k) != obj['coin'].getDisp():
+						if obj['grid'].get_XY(x + j, y + k) != obj['grid'].get_col() + ' ' and obj['grid'].get_XY(x + j, y + k) != obj['coin'].get_disp():
 							flag = 1
 							break
 					if flag:
 						break
 				if not flag:
 					self._arr.add((x, y + frameNo * gridDim[1][1]))
+					obj['coin'].checkCol(x, y, self._disp, obj)
 					for i in range(self._disp.shape[0]):
 						for j in range(self._disp.shape[1]):
 							if self._disp[i][j] != ' ':
-								obj['grid'].setBoardXY(i + x, j + y + frameNo * gridDim[1][1], self._col + self._disp[i][j])
+								obj['grid'].set_XY(i + x, j + y + frameNo * gridDim[1][1], self._col + self._disp[i][j])
 					break

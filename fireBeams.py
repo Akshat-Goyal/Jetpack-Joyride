@@ -9,15 +9,14 @@ class FireBeam:
 		self._col = Fore.YELLOW + Back.YELLOW
 		self._arr = set()
 
-	def changeY(self, obj):
+	def set_XY(self, obj):
 		tmp = set()
 		for i in self._arr:
-			tmp.add(((i[0][0], i[0][1] - 1), i[1]))
-			if i[0][1] > obj['grid'].getDim()[1][0]:
+			if i[0][1] > obj['grid'].get_dim()[1][0]:
 				tmp.add(((i[0][0], i[0][1] - 1), i[1]))
 		self._arr = tmp
 
-	def checkCol(self, x, y, disp, obj):
+	def checkCol(self, x, y, disp, obj, On):
 		ar = []
 		dim = disp.shape
 		for i in self._arr:
@@ -40,20 +39,21 @@ class FireBeam:
 						break
 				if br:
 					break
-		self.removeObstacle(ar, obj)
+		if On:
+			self.render(ar, obj)
 		return len(ar) > 0
 
-	def removeObstacle(self, ar, obj):
+	def render(self, ar, obj):
 		for i in ar:
 			self._arr.remove(i)
 			for j in range(self._disp[i[1]].shape[0]):
 				for k in range(self._disp[i[1]].shape[1]):
 					if self._disp[i[1]][j][k] != ' ':
-						obj['grid'].setBoardXY(j + i[0][0], k + i[0][1], obj['grid'].getCol() + ' ')
+						obj['grid'].set_XY(j + i[0][0], k + i[0][1], obj['grid'].get_col() + ' ')
 
 	def drawObstacle(self, obj, frameNo):
 		count = int(random.random() * 5 + 2)
-		gridDim = obj['grid'].getDim()
+		gridDim = obj['grid'].get_dim()
 		for _ in range(count):
 			while True:
 				z = int(random.random() * 3)
@@ -64,15 +64,16 @@ class FireBeam:
 					for k in range(self._disp[z].shape[1]):
 						if self._disp[z][j][k] ==  ' ':
 							continue
-						if obj['grid'].getBoardXY(x + j, y + k) != obj['grid'].getCol() + ' ' and obj['grid'].getBoardXY(x + j, y + k) != obj['coin'].getDisp():
+						if obj['grid'].get_XY(x + j, y + k) != obj['grid'].get_col() + ' ' and obj['grid'].get_XY(x + j, y + k) != obj['coin'].get_disp():
 							flag = 1
 							break
 					if flag:
 						break
 				if not flag:
 					self._arr.add(((x, y + frameNo * gridDim[1][1]), z))
+					obj['coin'].checkCol(x, y, self._disp[z], obj)
 					for i in range(self._disp[z].shape[0]):
 						for j in range(self._disp[z].shape[1]):
 							if self._disp[z][i][j] != ' ':
-								obj['grid'].setBoardXY(i + x, j + y + frameNo * gridDim[1][1],self._col + self._disp[z][i][j])
+								obj['grid'].set_XY(i + x, j + y + frameNo * gridDim[1][1], self._col + self._disp[z][i][j])
 					break
