@@ -5,7 +5,15 @@ from colorama import Fore, Style, Back
 
 class BossEnemy(Person):
 	def __init__(self, gridDim):
-		self._disp = np.array([['B', 'B'], ['O', 'O'], ['S', 'S'], ['S', 'S']])
+		f = open('./bossEnemy.txt', 'r')
+		self._disp = []
+		for line in f:
+			line = line.split('\n')[0]
+			tmp = []
+			for i in line:
+				tmp.append(i)
+			self._disp.append(tmp)
+		self._disp = np.array(self._disp)
 		self._x = None
 		self._y = gridDim[1][1] - self._disp.shape[1]
 		self._maxLive = 10
@@ -37,19 +45,17 @@ class BossEnemy(Person):
 					if not self._lives:
 						obj['grid'].gameOver()
 					return True
+		return False
 
 	def checkBoss(self, obj):
 		self._isReady = 1
 		bXY = obj['barry'].getXY()
-		x = self._x
 		if bXY[0] + self._disp.shape[0] > obj['grid'].getDim()[0][1]:
 			self._x = obj['grid'].getDim()[0][1] - self._disp.shape[0]
 		else:
 			self._x = bXY[0]
-		if x == self._x:
-			return
 
-		obj['iceBall'].makeWeapon(self._x + int((self._disp.shape[0] - 1) / 2), self._y + self._disp.shape[1], obj)
+		obj['iceBall'].makeWeapon(self._x + int((self._disp.shape[0] - 1) / 2), self._y - 1, obj)
 		obj['beam'].checkCol(self._x, self._y, self._disp, obj)
 		obj['coin'].checkCol(self._x, self._y, self._disp, obj)
 		obj['magnet'].checkCol(self._x, self._y, self._disp, obj)
