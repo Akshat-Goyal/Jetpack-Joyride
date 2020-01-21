@@ -16,7 +16,7 @@ class Magnet:
 				tmp.add((i[0], i[1] - 1))
 		self._arr = tmp
 
-	def checkCol(self, x, y, disp, obj, On):
+	def checkCol(self, x, y, disp, obj):
 		ar = []
 		dim = disp.shape
 		for i in self._arr:
@@ -39,8 +39,7 @@ class Magnet:
 						break
 				if br:
 					break
-		if On:
-			self.render(ar, obj)
+		self.render(ar, obj)
 		return len(ar) > 0
 
 	def render(self, ar, obj):

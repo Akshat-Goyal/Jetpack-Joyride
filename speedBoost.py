@@ -27,7 +27,7 @@ class SpeedBoost:
 				tmp.add((i[0], i[1] - 1))
 		self._arr = tmp
 
-	def checkCol(self, x, y, disp, obj, On):
+	def checkCol(self, x, y, disp, obj):
 		ar = []
 		dim = disp.shape
 		for i in self._arr:
@@ -50,7 +50,7 @@ class SpeedBoost:
 						break
 				if br:
 					break
-		if On and len(ar):
+		if len(ar):
 			self._lastTime = int(round(time.time()))
 		self.render(ar, obj)
 		return len(ar) > 0

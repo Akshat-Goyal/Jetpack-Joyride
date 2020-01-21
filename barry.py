@@ -83,7 +83,7 @@ class Barry(Person):
 	def set_score(self, x):
 		self._score += x
 
-	def checkCol(self, x, y, disp, obj, On):
+	def checkCol(self, x, y, disp, obj):
 		dim = disp.shape
 		i = (self._x, self._y)
 		if y + dim[1] <= i[1] or i[1] + self._disp.shape[1] <= y:
@@ -99,7 +99,7 @@ class Barry(Person):
 				if i[1] + k - y < 0 or i[1] + k - y >= dim[1]:
 					continue
 				if disp[i[0] + j - x][i[1] + k - y] != ' ':
-					if self._shieldOn != 1 and On:
+					if self._shieldOn != 1:
 						self._lives -= 1
 					if not self._lives:
 						obj['grid'].gameOver()
@@ -109,15 +109,15 @@ class Barry(Person):
 	def objCol(self, obj):
 		isCol = 0
 		self._score += obj['coin'].checkCol(self._x, self._y, self._disp, obj)
-		obj['speedBoost'].checkCol(self._x, self._y, self._disp, obj, True)
-		self._dragonOn |= obj['dragonBoost'].checkCol(self._x, self._y, self._disp, obj, True)
-		isCol |= obj['boss'].checkCol(self._x, self._y, self._disp, obj, True)
+		obj['speedBoost'].checkCol(self._x, self._y, self._disp, obj)
+		self._dragonOn |= obj['dragonBoost'].checkCol(self._x, self._y, self._disp, obj)
+		isCol |= obj['boss'].checkCol(self._x, self._y, self._disp, obj)
 		if isCol:
 			self._x = obj['grid'].get_dim()[0][1] - self._disp().shape[0]
 			self._y = obj['grid'].get_dim()[1][0]
-		isCol |= obj['beam'].checkCol(self._x, self._y, self._disp, obj, True)
-		isCol |= obj['iceBall'].checkCol(self._x, self._y, self._disp, obj, True)
-		obj['bullet'].checkCol(self._x, self._y, self._disp, obj, True)
+		isCol |= obj['beam'].checkCol(self._x, self._y, self._disp, obj)
+		isCol |= obj['iceBall'].checkCol(self._x, self._y, self._disp, obj)
+		obj['bullet'].checkCol(self._x, self._y, self._disp, obj)
 		if isCol and self._shieldOn != 1 and not self._dragonOn:
 			self._lives -= 1
 		if not self._lives:

@@ -18,11 +18,11 @@ class IceBall:
 		isCol |= y < obj['grid'].get_dim()[1][0]
 		isCol |= x + self._disp.shape[0] > obj['grid'].get_dim()[0][1]
 		if not isCol:
-			obj['beam'].checkCol(x, y, self._disp, obj, True)
-			obj['magnet'].checkCol(x, y, self._disp, obj, True)
+			obj['beam'].checkCol(x, y, self._disp, obj)
+			obj['magnet'].checkCol(x, y, self._disp, obj)
 			obj['coin'].checkCol(x, y, self._disp, obj) > 0
-			isCol |= obj['bullet'].checkCol(x, y, self._disp, obj, True)
-			isCol |= obj['barry'].checkCol(x, y, self._disp, obj, True)
+			isCol |= obj['bullet'].checkCol(x, y, self._disp, obj)
+			isCol |= obj['barry'].checkCol(x, y, self._disp, obj)
 		return isCol
 
 	def set_XY(self, obj):
@@ -37,7 +37,7 @@ class IceBall:
 				tmp.add((i[0], i[1] - self._vy))
 		self._arr = tmp
 
-	def checkCol(self, x, y, disp, obj, On):
+	def checkCol(self, x, y, disp, obj):
 		dim = disp.shape
 		ar = []
 		for i in self._arr:
@@ -60,9 +60,8 @@ class IceBall:
 						break
 				if br:
 					break
-		if On:
-			for i in ar:
-				self._arr.remove(i)
+		for i in ar:
+			self._arr.remove(i)
 		return len(ar) > 0
 
 	def render(self, obj):

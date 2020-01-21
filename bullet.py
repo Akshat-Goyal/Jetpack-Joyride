@@ -15,10 +15,10 @@ class Bullet:
 		isCol = 0
 		isCol |= y + self._disp.shape[1] > obj['grid'].get_dim()[1][1]
 		if not isCol:
-			isCol |= obj['beam'].checkCol(x, y, self._disp, obj, True)
-			isCol |= obj['iceBall'].checkCol(x, y, self._disp, obj, True)
+			isCol |= obj['beam'].checkCol(x, y, self._disp, obj)
+			isCol |= obj['iceBall'].checkCol(x, y, self._disp, obj)
 			if obj['boss'].get_isReady():
-				isCol |= obj['boss'].checkCol(x, y, self._disp, obj, True)
+				isCol |= obj['boss'].checkCol(x, y, self._disp, obj)
 		return isCol
 
 	def set_XY(self, y, obj):
@@ -33,7 +33,7 @@ class Bullet:
 				tmp.add((i[0], i[1] + y))
 		self._arr = tmp			
 
-	def checkCol(self, x, y, disp, obj, On):
+	def checkCol(self, x, y, disp, obj):
 		dim = disp.shape
 		ar = []
 		for i in self._arr:
@@ -56,9 +56,8 @@ class Bullet:
 						break
 				if br:
 					break
-		if On:
-			for i in ar:
-				self._arr.remove(i)
+		for i in ar:
+			self._arr.remove(i)
 		return len(ar) > 0
 
 	def render(self, obj):

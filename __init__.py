@@ -66,8 +66,8 @@ if __name__ == "__main__":
 		barry.checkShield()
 		magnet.checkMagnet(obj)
 		if boss.get_isReady():
-			boss.checkBoss(obj)
 			iceBall.set_XY(obj)
+			boss.checkBoss(obj)
 		bullet.set_XY(4, obj)
 
 		if ch != 'w' or ch != 'W':

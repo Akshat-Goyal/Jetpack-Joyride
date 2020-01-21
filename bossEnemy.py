@@ -30,7 +30,7 @@ class BossEnemy(Person):
 	def get_live(self):
 		return self._livesLeft / self._lives * 100
 
-	def checkCol(self, x, y, disp, obj, On):
+	def checkCol(self, x, y, disp, obj):
 		if not self._x:
 			return False
 		dim = disp.shape
@@ -48,8 +48,7 @@ class BossEnemy(Person):
 				if i[1] + k - y < 0 or i[1] + k - y >= dim[1]:
 					continue
 				if disp[i[0] + j - x][i[1] + k - y] != ' ':
-					if On:
-						self._livesLeft -= 1
+					self._livesLeft -= 1
 					if not self._livesLeft:
 						obj['grid'].gameWon()
 					return True
@@ -63,12 +62,12 @@ class BossEnemy(Person):
 			self._x = bXY[0]
 
 		obj['iceBall'].makeWeapon(self._x + int((self._disp.shape[0] - 1) / 2), self._y - 1, obj)
-		obj['beam'].checkCol(self._x, self._y, self._disp, obj, True)
+		obj['beam'].checkCol(self._x, self._y, self._disp, obj)
 		obj['coin'].checkCol(self._x, self._y, self._disp, obj)
-		obj['magnet'].checkCol(self._x, self._y, self._disp, obj, True)
-		if obj['bullet'].checkCol(self._x, self._y, self._disp, obj, True):
+		obj['magnet'].checkCol(self._x, self._y, self._disp, obj)
+		if obj['bullet'].checkCol(self._x, self._y, self._disp, obj):
 			self._livesLeft -= 1
-		if self.checkCol(bXY[0], bXY[1], obj['barry'].get_disp(), obj, True):
+		if obj['barry'].checkCol(self._x, self._y, self._disp, obj):
 			self._livesLeft -= 1
 			obj['barry'].set_XY(obj['grid'].get_dim()[0][1] - obj['barry'].get_disp().shape[0], obj['grid'].get_dim()[1][0])
 	
