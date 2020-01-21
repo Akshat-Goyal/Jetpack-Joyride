@@ -2,25 +2,23 @@ import numpy as np
 import random
 import colorama
 from colorama import Back, Fore, Style
+import time
 
 class SpeedBoost:
 	def __init__(self):
 		self._disp = np.array([[' ', '-', ' '], ['|', '2', '|'], [' ', '-', ' ']])
 		self._col = Back.BLACK + Fore.GREEN
 		self._arr = set()
-		self._boostTime = 10
+		self._boostTime = 5
 		self._curTime = 0
-		self._boostOn = 0
 
 	def isBoostOn(self):
-		return self._boostOn
+		return self._curTime > 0
 
 	def checkBoostTime(self):
-		if self._boostOn:
-			self._curTime += 1
-			if self._curTime == self._boostTime:
+		if self._curTime:
+			if int(round(time.time())) - self._curTime > self._boostTime:
 				self._curTime = 0
-				self._boostOn = 0 
 
 	def changeY(self, obj):
 		tmp = set()
@@ -54,8 +52,7 @@ class SpeedBoost:
 					break
 		if len(ar) > 0:
 			if On:
-				self._boostOn = 1
-				self._boostTime = 0
+				self._curTime = int(round(time.time()))
 			self.removeBoost(ar, obj)
 		return len(ar) > 0
 

@@ -16,7 +16,7 @@ import colorama
 if __name__ == "__main__":
 	colorama.init(autoreset=True)
 	os.system('clear')
-	grid = Board(40, 120, 1)
+	grid = Board(40, 120, 5)
 	barry = Barry(grid.getDim())
 	speedBoost = SpeedBoost()
 	coin = Coin()
@@ -54,6 +54,7 @@ if __name__ == "__main__":
 			prev_time = current_milli_time()
 
 		ch = input_to(getch)
+		
 		barry.render(obj)
 		bullet.render(obj)
 		if isBossReady:
