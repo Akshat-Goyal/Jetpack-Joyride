@@ -52,7 +52,6 @@ class BossEnemy(Person):
 					self.__livesLeft -= 1
 					if not self.__livesLeft:
 						obj['grid'].gameWon(obj)
-						self.__isReady = 0
 					return True
 		return False
 
@@ -76,11 +75,9 @@ class BossEnemy(Person):
 			self.__livesLeft -= 1
 			if not self.__livesLeft:
 				obj['grid'].gameWon(obj)
-				self.__isReady = 0
 		if obj['barry'].checkCol(self._x, self._y, self._disp, obj):
 			self.__livesLeft -= 1	
 			if not self.__livesLeft:
 				obj['grid'].gameWon(obj)
-				self.__isReady = 0
 			obj['barry'].set_XY(obj['grid'].get_dim()[0][1] - obj['barry'].get_disp().shape[0], obj['grid'].get_dim()[1][0])
 	
