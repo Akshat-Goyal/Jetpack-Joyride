@@ -19,15 +19,18 @@ class BossEnemy(Person):
 		self.__livesLeft = self.__lives
 		self.__isReady = 0
 
+	# has boss arrived in the game
 	def get_isReady(self):
 		return self.__isReady		
 
+	# boss comes in the game
 	def set_ready(self, x):
 		self.__isReady = x
 
 	def get_live(self):
 		return int(self.__livesLeft / self.__lives * 100)
 
+	# checks boss collision with given obj
 	def checkCol(self, x, y, disp, obj):
 		if not self._x:
 			return False
@@ -49,9 +52,15 @@ class BossEnemy(Person):
 					self.__livesLeft -= 1
 					if not self.__livesLeft:
 						obj['grid'].gameWon(obj)
+						self.__isReady = 0
 					return True
 		return False
 
+	# fires snow ball
+	def fire(self, obj):
+		obj['iceBall'].makeWeapon(self._x + int((self._disp.shape[0] - 1) / 2), self._y - 1, obj)
+
+	# checks the position of boss according to barry and checks boss collision and fires snow
 	def checkBoss(self, obj):
 		bXY = obj['barry'].get_XY()
 		if bXY[0] + self._disp.shape[0] > obj['grid'].get_dim()[0][1]:
@@ -59,13 +68,19 @@ class BossEnemy(Person):
 		else:
 			self._x = bXY[0]
 
-		obj['iceBall'].makeWeapon(self._x + int((self._disp.shape[0] - 1) / 2), self._y - 1, obj)
+		self.fire(obj)
 		obj['beam'].checkCol(self._x, self._y, self._disp, obj)
 		obj['coin'].checkCol(self._x, self._y, self._disp, obj)
 		obj['magnet'].checkCol(self._x, self._y, self._disp, obj)
 		if obj['bullet'].checkCol(self._x, self._y, self._disp, obj):
 			self.__livesLeft -= 1
+			if not self.__livesLeft:
+				obj['grid'].gameWon(obj)
+				self.__isReady = 0
 		if obj['barry'].checkCol(self._x, self._y, self._disp, obj):
 			self.__livesLeft -= 1	
+			if not self.__livesLeft:
+				obj['grid'].gameWon(obj)
+				self.__isReady = 0
 			obj['barry'].set_XY(obj['grid'].get_dim()[0][1] - obj['barry'].get_disp().shape[0], obj['grid'].get_dim()[1][0])
 	

@@ -20,6 +20,7 @@ class Coin:
 				tmp.add((i[0], i[1] - 1))
 		self.__arr = tmp
 
+	# checks the collision of coins with given obj
 	def checkCol(self, x, y, disp, obj):
 		dim = disp.shape
 		score = 0
@@ -33,11 +34,13 @@ class Coin:
 					score += 1
 		return score
 
+	# draws all the coin
 	def drawCoin(self, obj):
 		for i in self.__arr:
 			if i[1] < obj['grid'].get_dim()[1][1]:
 				obj['grid'].set_XY(i[0], i[1], self.__chCoin)
 
+	# makes new coin
 	def makeCoin(self, obj, frameNo):
 		count = int(random.random() * 5 + 5)
 		gridDim = obj['grid'].get_dim()

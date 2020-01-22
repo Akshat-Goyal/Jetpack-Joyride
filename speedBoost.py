@@ -10,11 +10,13 @@ class SpeedBoost:
 		self.__col = Back.BLACK + Fore.GREEN
 		self.__arr = set()
 		self.__boostTime = 5
-		self.__lastTime = 0
+		self.__lastTime = 0	
 
+	# is boost on
 	def get_isBoostOn(self):
 		return self.__lastTime > 0
 
+	# checks boost time 
 	def checkBoostTime(self):
 		if self.__lastTime:
 			if int(round(time.time())) - self.__lastTime > self.__boostTime:
@@ -27,6 +29,7 @@ class SpeedBoost:
 				tmp.add((i[0], i[1] - 1))
 		self.__arr = tmp
 
+	# checks the collision of boosts with given obj
 	def checkCol(self, x, y, disp, obj):
 		ar = []
 		dim = disp.shape
@@ -55,6 +58,7 @@ class SpeedBoost:
 		self.render(ar, obj)
 		return len(ar) > 0
 
+	# removes boosts from the grid in the ar
 	def render(self, ar, obj):
 		for i in ar:
 			self.__arr.remove(i)
@@ -63,6 +67,7 @@ class SpeedBoost:
 					if self.__disp[j][k] != ' ':
 						obj['grid'].set_XY(j + i[0], k + i[1], obj['grid'].get_col() +  ' ')
 
+	# draws all the boost on the grid
 	def drawBoost(self, obj):
 		for i in self.__arr:
 			if i[1] >= obj['grid'].get_dim()[1][1]:
@@ -74,6 +79,7 @@ class SpeedBoost:
 					if self.__disp[j][k] != ' ':
 						obj['grid'].set_XY(j + x, k + y, self.__col + self.__disp[j][k])
 
+	# make a new boost on the grid
 	def makeBoost(self, obj, frameNo):
 		count = int(random.random() + 0.4)
 		gridDim = obj['grid'].get_dim()

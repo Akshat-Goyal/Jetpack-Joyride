@@ -16,6 +16,7 @@ class Magnet:
 				tmp.add((i[0], i[1] - 1))
 		self.__arr = tmp
 
+	# checks the collision of magnet with given obj
 	def checkCol(self, x, y, disp, obj):
 		ar = []
 		dim = disp.shape
@@ -42,6 +43,7 @@ class Magnet:
 		self.render(ar, obj)
 		return len(ar) > 0
 
+	# removes magnets from the grid in the ar
 	def render(self, ar, obj):
 		for i in ar:
 			self.__arr.remove(i)
@@ -50,6 +52,7 @@ class Magnet:
 					if self.__disp[j][k] != ' ':
 						obj['grid'].set_XY(j + i[0], k + i[1], obj['grid'].get_col() + ' ')
 
+	# attracts the barry if magnet on the grid
 	def checkMagnet(self, obj):
 		if obj['barry'].get_isDragonOn():
 			return
@@ -77,7 +80,7 @@ class Magnet:
 				obj['barry'].jump(u / abs(u), obj)
 				u = int((abs(u) - 1) * u / abs(u))
 
-
+	# draws all the magnets on the grid
 	def drawObstacle(self, obj):
 		for i in self.__arr:
 			if i[1] >= obj['grid'].get_dim()[1][1]:
@@ -89,7 +92,8 @@ class Magnet:
 					if self.__disp[j][k] != ' ':
 						obj['grid'].set_XY(j + x, k + y, self.__col + self.__disp[j][k])
 
-	def makeMagnet(self, obj, frameNo):
+	# makes a new magnet on the grid
+	def makeObstacle(self, obj, frameNo):
 		count = int(random.random() + 0.2)
 		gridDim = obj['grid'].get_dim()
 		for _ in range(count):

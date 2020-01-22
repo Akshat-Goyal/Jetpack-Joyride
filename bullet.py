@@ -13,6 +13,7 @@ class Bullet:
 		self.__lastTime = 0
 		self.__arr = set()
 
+	# checks bullet's collision with diff obj
 	def objCol(self, x, y, obj):
 		isCol = 0
 		isCol |= y + self.__disp.shape[1] > obj['grid'].get_dim()[1][1]
@@ -35,6 +36,7 @@ class Bullet:
 				tmp.add((i[0], i[1] + y))
 		self.__arr = tmp			
 
+	# checks the collision of bullets with given obj
 	def checkCol(self, x, y, disp, obj):
 		dim = disp.shape
 		ar = []
@@ -62,6 +64,7 @@ class Bullet:
 			self.__arr.remove(i)
 		return len(ar) > 0
 
+	# remove all bullets from the grid
 	def render(self, obj):
 		dim = self.__disp.shape
 		for i in self.__arr:
@@ -70,6 +73,7 @@ class Bullet:
 					if self.__disp[j][k] != ' ':
 						obj['grid'].set_XY(i[0] + j, i[1] + k, obj['grid'].get_col() + ' ')
 
+	# draw all bullets on the grid
 	def drawWeapon(self, obj):
 		dim = self.__disp.shape
 		for i in self.__arr:
@@ -78,6 +82,7 @@ class Bullet:
 					if self.__disp[j][k] != ' ':
 						obj['grid'].set_XY(i[0] + j, i[1] + k, self.__col + self.__disp[j][k])
 
+	# makes new bullet on the grid
 	def makeWeapon(self, x, y, obj):
 		if self.__lastTime:
 			if int(round(time.time())) - self.__lastTime > self.__shootTime:

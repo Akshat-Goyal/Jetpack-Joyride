@@ -20,6 +20,7 @@ class Board:
 		self.__curCol = 0
 		self.createBoundry()
 
+	# creates the sky and ground boundary
 	def createBoundry(self):
 		for i in range(0, 2 * self.__breadth, self.__sky.shape[1]):
 			self.__board[:min(self.__sky.shape[0], self.__length), i:min(i+self.__sky.shape[1], 2*self.__breadth)] = self.__sky[:min(self.__sky.shape[0], self.__length), :min(self.__sky.shape[1], 2*self.__breadth-i)]
@@ -27,40 +28,50 @@ class Board:
 		for i in range(0, 2 * self.__breadth, self.__ground.shape[1]):
 			self.__board[max(0, self.__length-self.__ground.shape[0]):, i:min(i+self.__ground.shape[1], 2*self.__breadth)] = self.__ground[max(0, self.__ground.shape[0]-self.__length):, :min(self.__ground.shape[1], 2*self.__breadth-i)]
 
+	# moves the screen towards left by 1 column
 	def shift(self, obj):
+		# last frame is on terminal
 		if not self.__frame and not self.__curCol:
 			return True
+
+		# objects are removed from the grid
 		obj['barry'].render(obj)
 		obj['bullet'].render(obj)
 
+		# another frame is made
 		if not self.__curCol:
 			self.__frame -= 1
 			self.__board[self.__sky.shape[0]:self.__length - self.__ground.shape[0], self.__breadth:] = self.__col + ' '
 			obj['coin'].makeCoin(obj, 1)
-			obj['beam'].drawObstacle(obj, 1)
-			obj['magnet'].makeMagnet(obj, 1)
+			obj['beam'].makeObstacle(obj, 1)
+			obj['magnet'].makeObstacle(obj, 1)
 			if self.__frame:				
 				obj['dragonBoost'].makeBoost(obj, 1)
 				obj['speedBoost'].makeBoost(obj, 1)
 
+		# grid is moved to left by 1 column
 		self.__curCol += 1
 		self.__board[:, :2 * self.__breadth - self.__curCol] = self.__board[:, 1:2 * self.__breadth - self.__curCol + 1]
 		self.__curCol %= self.__breadth
 
+		# position of objects on the grid decreases by 1
 		obj['coin'].set_XY(obj)
 		obj['beam'].set_XY(obj)
 		obj['magnet'].set_XY(obj)
 		obj['speedBoost'].set_XY(obj)
 		obj['dragonBoost'].set_XY(obj)
 
+		# checks for the collision
 		obj['barry'].checkShield()
 		obj['bullet'].set_XY(0, obj)
 		obj['barry'].changeDisp(obj)
 		obj['barry'].move(0, obj)
 		obj['magnet'].checkMagnet(obj)
 
+		# objects are drawn on the grid
 		obj['coin'].drawCoin(obj)
 		obj['magnet'].drawObstacle(obj)
+		obj['beam'].drawObstacle(obj)
 		obj['speedBoost'].drawBoost(obj)
 		obj['dragonBoost'].drawBoost(obj)
 		obj['bullet'].drawWeapon(obj)
@@ -87,7 +98,7 @@ class Board:
 		print(Back.BLACK + Fore.WHITE + "Live: " + str(obj['barry'].get_live()) + "  ", end="")
 		print(Back.BLACK + Fore.WHITE + "Shield Power: " + str(obj['barry'].get_shieldPower()) + "  ", end="")
 		if obj['boss'].get_isReady():
-			print(Back.BLACK + Fore.WHITE + "Boss Live: " + str(obj['boss'].get_live()) + "  ", end="")
+			print(Back.BLACK + Fore.WHITE + "Boss Live: " + str(obj['boss'].get_live()) + "%   ", end="")
 		print("\n\n\n")
 		print(Fore.GREEN + Back.BLACK + "  ________                         ________                     " + "\n",
 		Fore.GREEN + Back.BLACK + " /  _____/_____    _____   ____    \_____  \___  __ ___________ " + "\n",
@@ -105,7 +116,7 @@ class Board:
 		print(Back.BLACK + Fore.WHITE + "Live: " + str(obj['barry'].get_live()) + "  ", end="")
 		print(Back.BLACK + Fore.WHITE + "Shield Power: " + str(obj['barry'].get_shieldPower()) + "  ", end="")
 		if obj['boss'].get_isReady():
-			print(Back.BLACK + Fore.WHITE + "Boss Live: " + str(obj['boss'].get_live()) + "  ", end="")
+			print(Back.BLACK + Fore.WHITE + "Boss Live: " + str(obj['boss'].get_live()) + "%   ", end="")
 		print("\n\n\n")
 		print(Back.BLACK + Fore.GREEN + "  ________                          __      __              " + "\n",
 		Back.BLACK + Fore.GREEN + " /  _____/_____    _____   ____    /  \    /  \____   ____  " + "\n",
@@ -115,6 +126,7 @@ class Board:
 		Back.BLACK + Fore.GREEN + "        \/     \/      \/     \/          \/             \/ " + "\n")
 		sys.exit(0)
 
+	# prints the grid on the terminal
 	def printBoard(self, obj):
 		print("\033[0;0f", end="")
 		print(Back.BLACK + Fore.WHITE + "Time: " + str(int(round(time.time())) - obj['stime']) + "  ", end="")
@@ -122,7 +134,7 @@ class Board:
 		print(Back.BLACK + Fore.WHITE + "Live: " + str(obj['barry'].get_live()) + "  ", end="")
 		print(Back.BLACK + Fore.WHITE + "Shield Power: " + str(obj['barry'].get_shieldPower()), "  ", end="")
 		if obj['boss'].get_isReady():
-			print(Back.BLACK + Fore.WHITE + "Boss Live: " + str(obj['boss'].get_live()) + "  ", end="")
+			print(Back.BLACK + Fore.WHITE + "Boss Live: " + str(obj['boss'].get_live()) + "%   ", end="")
 		st = Back.BLACK + Fore.BLACK + "\n"
 		for i in range(self.__length):
 			for j in range(self.__breadth):

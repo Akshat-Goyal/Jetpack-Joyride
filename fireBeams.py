@@ -16,6 +16,7 @@ class FireBeam:
 				tmp.add(((i[0][0], i[0][1] - 1), i[1]))
 		self.__arr = tmp
 
+	# checks the collision of fire beam with given obj
 	def checkCol(self, x, y, disp, obj):
 		ar = []
 		dim = disp.shape
@@ -42,6 +43,7 @@ class FireBeam:
 		self.render(ar, obj)
 		return len(ar) > 0
 
+	# removes fire beams from the grid in the ar
 	def render(self, ar, obj):
 		for i in ar:
 			self.__arr.remove(i)
@@ -50,7 +52,21 @@ class FireBeam:
 					if self.__disp[i[1]][j][k] != ' ':
 						obj['grid'].set_XY(j + i[0][0], k + i[0][1], obj['grid'].get_col() + ' ')
 
-	def drawObstacle(self, obj, frameNo):
+	# draws all the fire beams on the grid
+	def drawObstacle(self, obj):
+		for i in self.__arr:
+			if i[0][1] >= obj['grid'].get_dim()[1][1]:
+				continue
+			x = i[0][0]
+			y = i[0][1]
+			z = i[1]
+			for j in range(self.__disp[z].shape[0]):
+				for k in range(self.__disp[z].shape[1]):
+					if self.__disp[z][j][k] != ' ':
+						obj['grid'].set_XY(j + x, k + y, self.__col + self.__disp[z][j][k])
+
+	# draws new fire beam on the grid
+	def makeObstacle(self, obj, frameNo):
 		count = int(random.random() * 5 + 2)
 		gridDim = obj['grid'].get_dim()
 		for _ in range(count):

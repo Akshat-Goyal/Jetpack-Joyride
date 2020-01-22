@@ -8,6 +8,7 @@ class Person:
 		self._disp = disp
 		self._col = col
 
+	# draws person on the grid
 	def drawPerson(self, obj):
 		if self._x == None:
 			return
@@ -17,10 +18,11 @@ class Person:
 				if self._disp[i][j] != ' ':
 					obj['grid'].set_XY(self._x + i, self._y + j, self._col + self._disp[i][j])
 
+	# removes the person from the grid
 	def render(self, obj):
-		dim = self._disp.shape
 		if self._x == None:
 			return
+		dim = self._disp.shape
 		for i in range(dim[0]):
 			for j in range(dim[1]):
 				if self._disp[i][j] != ' ':

@@ -17,6 +17,7 @@ import colorama
 if __name__ == "__main__":
 	colorama.init(autoreset=True)
 	os.system('clear')
+	# initialize all objects
 	grid = Board(40, 120, 12)
 	barry = Barry(grid.get_dim())
 	coin = Coin()
@@ -30,23 +31,28 @@ if __name__ == "__main__":
 	stime = int(round(time.time()))
 	obj = {'grid': grid, 'barry': barry, 'coin': coin, 'beam': beam, 'magnet': magnet, 'speedBoost': speedBoost, 'bullet': bullet, 'iceBall': iceBall, 'boss': boss, 'dragonBoost': dragonBoost, 'stime': stime}
 
+	# constructing a frame/grid
 	coin.makeCoin(obj, 0)
 	barry.drawPerson(obj)
-	beam.drawObstacle(obj, 0)
+	beam.makeObstacle(obj, 0)
 	speedBoost.makeBoost(obj, 0)
-	magnet.makeMagnet(obj, 0)
+	magnet.makeObstacle(obj, 0)
 
+	# prints the grid
 	grid.printBoard(obj)
 
 	current_milli_time = lambda: int(round(time.time() * 1000))
 	prev_time = current_milli_time()
 	milis_per_frame = 60
+	# to get character asynchronoulsy
 	getch = Get()
 
 	while(True):
+		# if time of the game exceeda
 		if int(round(time.time())) - stime > 200:
 			grid.gameOver(obj)
 
+		# shift the grid to left continuously after some milli sec.
 		if current_milli_time() - prev_time > milis_per_frame:
 			boss.set_ready(grid.shift(obj))
 			boss.set_ready(grid.shift(obj))
@@ -55,28 +61,32 @@ if __name__ == "__main__":
 				boss.set_ready(grid.shift(obj))
 			prev_time = current_milli_time()
 
+		# get input from the terminal
 		ch = input_to(getch)
 
+		# removes objects from the grid
 		barry.render(obj)
 		bullet.render(obj)
+		iceBall.render(obj)
 		if boss.get_isReady():
 			boss.render(obj)
-			iceBall.render(obj)
 
+		# checks collision and moves obj
 		speedBoost.checkBoostTime()
 		barry.checkShield()
 		magnet.checkMagnet(obj)
+		iceBall.set_XY(obj)
 		if boss.get_isReady():
-			iceBall.set_XY(obj)
 			boss.checkBoss(obj)
 		bullet.set_XY(4, obj)
 
+		# barry is moved
 		if ch != 'w' or ch != 'W':
 			barry.gravity(obj)
 		if ch == ' ':
 			barry.set_shieldOn(obj)
 		elif ch == 'k' or ch == 'K':
-			bullet.makeWeapon(barry.get_XY()[0] + int((barry.get_disp().shape[0] - 1) / 2), barry.get_XY()[1] + barry.get_disp().shape[1], obj)
+			barry.fire(obj)
 		elif ch == 'd' or ch == 'D':
 			barry.move(2, obj)
 		elif ch == 'a' or ch == 'A':
@@ -86,17 +96,21 @@ if __name__ == "__main__":
 		elif ch == 'q' or ch == 'Q':
 			break
 		
+		# barry's display is checked
 		barry.changeDisp(obj)
 		barry.move(0, obj)
 
+		# objects are drawn on the grid
 		coin.drawCoin(obj)
 		magnet.drawObstacle(obj)
+		beam.drawObstacle(obj)
 		speedBoost.drawBoost(obj)
 		dragonBoost.drawBoost(obj)
 		bullet.drawWeapon(obj)
 		barry.drawPerson(obj)
+		iceBall.drawWeapon(obj)
 		if boss.get_isReady():
 			boss.drawPerson(obj)
-			iceBall.drawWeapon(obj)
 
+		# grid printed on the terminal
 		grid.printBoard(obj)

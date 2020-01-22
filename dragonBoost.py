@@ -18,6 +18,7 @@ class DragonBoost:
 				tmp.add((i[0], i[1] - 1))
 		self.__arr = tmp
 
+	# checks the collision of boosts with given obj
 	def checkCol(self, x, y, disp, obj):
 		ar = []
 		dim = disp.shape
@@ -44,6 +45,7 @@ class DragonBoost:
 		self.render(ar, obj)
 		return len(ar) > 0
 
+	# removes the boost from the grid in the ar
 	def render(self, ar, obj):
 		for i in ar:
 			self.__arr.remove(i)
@@ -52,6 +54,7 @@ class DragonBoost:
 					if self.__disp[j][k] != ' ':
 						obj['grid'].set_XY(j + i[0], k + i[1], obj['grid'].get_col() +  ' ')
 
+	# draws all the boost on the grid
 	def drawBoost(self, obj):
 		for i in self.__arr:
 			if i[1] >= obj['grid'].get_dim()[1][1]:
@@ -63,6 +66,7 @@ class DragonBoost:
 					if self.__disp[j][k] != ' ':
 						obj['grid'].set_XY(j + x, k + y, self.__col + self.__disp[j][k])
 
+	# makes a new boost on the grid
 	def makeBoost(self, obj, frameNo):
 		if not self.__count:
 			return
