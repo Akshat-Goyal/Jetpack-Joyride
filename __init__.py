@@ -17,7 +17,7 @@ import colorama
 if __name__ == "__main__":
 	colorama.init(autoreset=True)
 	os.system('clear')
-	grid = Board(40, 120, 1)
+	grid = Board(40, 120, 12)
 	barry = Barry(grid.get_dim())
 	coin = Coin()
 	beam = FireBeam()
@@ -27,7 +27,8 @@ if __name__ == "__main__":
 	bullet = Bullet()
 	iceBall = IceBall()
 	boss = BossEnemy(grid.get_dim())
-	obj = {'grid': grid, 'barry': barry, 'coin': coin, 'beam': beam, 'magnet': magnet, 'speedBoost': speedBoost, 'bullet': bullet, 'iceBall': iceBall, 'boss': boss, 'dragonBoost': dragonBoost}
+	stime = int(round(time.time()))
+	obj = {'grid': grid, 'barry': barry, 'coin': coin, 'beam': beam, 'magnet': magnet, 'speedBoost': speedBoost, 'bullet': bullet, 'iceBall': iceBall, 'boss': boss, 'dragonBoost': dragonBoost, 'stime': stime}
 
 	coin.makeCoin(obj, 0)
 	barry.drawPerson(obj)
@@ -35,10 +36,7 @@ if __name__ == "__main__":
 	speedBoost.makeBoost(obj, 0)
 	magnet.makeMagnet(obj, 0)
 
-	grid.printBoard()
-	print("Score: " + str(barry.get_score()) + "    ")
-	print("Live: " + str(barry.get_live()) + "    ")
-	print("Shield Power:" + str(barry.get_shieldPower()) + "    ")
+	grid.printBoard(obj)
 
 	current_milli_time = lambda: int(round(time.time() * 1000))
 	prev_time = current_milli_time()
@@ -46,6 +44,9 @@ if __name__ == "__main__":
 	getch = Get()
 
 	while(True):
+		if int(round(time.time())) - stime > 200:
+			grid.gameOver(obj)
+
 		if current_milli_time() - prev_time > milis_per_frame:
 			boss.set_ready(grid.shift(obj))
 			boss.set_ready(grid.shift(obj))
@@ -84,23 +85,18 @@ if __name__ == "__main__":
 			barry.jump(-2, obj)
 		elif ch == 'q' or ch == 'Q':
 			break
-
 		
+		barry.changeDisp(obj)
+		barry.move(0, obj)
+
 		coin.drawCoin(obj)
 		magnet.drawObstacle(obj)
 		speedBoost.drawBoost(obj)
 		dragonBoost.drawBoost(obj)
 		bullet.drawWeapon(obj)
-		barry.changeDisp(obj)
-		barry.move(0, obj)
 		barry.drawPerson(obj)
 		if boss.get_isReady():
 			boss.drawPerson(obj)
 			iceBall.drawWeapon(obj)
 
-		grid.printBoard()
-		print("Score: " + str(barry.get_score()) + "    ")
-		print("Live: " + str(barry.get_live()) + "    ")
-		print("Shield Power:" + str(barry.get_shieldPower()) + "    ")
-		if boss.get_isReady():
-			print("Boss Enemy:" + str(boss.get_live()) + "    ")
+		grid.printBoard(obj)

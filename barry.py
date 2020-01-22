@@ -8,80 +8,97 @@ import time
 class Barry(Person):
 	def __init__(self, gridDim):
 		self._disp = np.array([['o', '-', 'o'], ['-', '|', '-'], ['/', ' ', '\\']])
-		self._fig = [self._disp, np.array([['6']])]
+		Person.__init__(self, gridDim[0][1] - self._disp.shape[0], gridDim[1][0], self._disp, Fore.CYAN + Back.BLACK)
+		self.__fig = [self._disp, np.array([['o', '^', 'o'], ['-', '|', '-'], ['|', ' ', '|']])]
+		for i in range(1, 3):
+			f = open('./dragon' + str(i) + '.txt', 'r')
+			tmp1 = []
+			for line in f:
+				line = line.split('\n')[0]
+				tmp2 = []
+				for i in line:
+					tmp2.append(i)
+				tmp1.append(tmp2)
+			self.__fig.append(np.array(tmp1))
 		self._dispNo = 0
-		self._dragonOn = 0
-		self._x = gridDim[0][1] - self._disp.shape[0]
-		self._y = gridDim[1][0]
-		self._lives = 10
-		Person.__init__(self, self._x, self._y, self._disp, Fore.CYAN + Back.BLACK)
-		self._score = 0
-		self._jumpCount = 0
-		self._gravity = 0.25
-		self._shieldStayTime = 10
-		self._lastShieldTime = 0
-		self._shieldPowerUpTime = 60
-		self._shieldOn = 0
+		self.__dragonOn = 0
+		self.__livesLeft = 10
+		self.__score = 0
+		self.__jumpCount = 0
+		self.__gravity = 0.25
+		self.__shieldStayTime = 10
+		self.__lastShieldTime = 0
+		self.__shieldPowerUpTime = 60
+		self.__shieldOn = 0
 
 	def changeDisp(self, obj):
-		if self._dragonOn:
-			self._dispNo += 1
-			if self._dispNo == len(self._fig):
-				self._dispNo = 1
+		if self.__dragonOn:
+			if self._dispNo < 2:
+				self._dispNo = 2
+			else:
+				self._dispNo += 1
+			if self._dispNo == len(self.__fig):
+				self._dispNo = 2
+		elif not self.__jumpCount and not self.onGround(obj):
+			self._dispNo = 1
 		else:
 			self._dispNo = 0
-		self._disp = self._fig[self._dispNo]
+		self._disp = self.__fig[self._dispNo]
 		if self._x + self._disp.shape[0] > obj['grid'].get_dim()[0][1]:
 			self._x =  obj['grid'].get_dim()[0][1] - self._disp.shape[0]
 		if self._y + self._disp.shape[1] > obj['grid'].get_dim()[1][1]:
 			self._y =  obj['grid'].get_dim()[1][1] - self._disp.shape[1]
+		if self.__dragonOn:
+			obj['bullet'].makeWeapon(self._x + int((self._disp.shape[0] - 1) / 2), self._y + self._disp.shape[1], obj)
 
 
 	def get_isDragonOn(self):
-		return self._dragonOn
+		return self.__dragonOn
 
 	def get_isShieldOn(self):
-		return self._shieldOn == 1
+		return self.__shieldOn == 1
 
 	def set_shieldOn(self, obj):
-		if not self._shieldOn and not self._dragonOn: 
-			self._shieldOn = 1
-			self._lastShieldTime = int(round(time.time()))
+		if not self.__shieldOn and not self.__dragonOn: 
+			self.__shieldOn = 1
+			self._col = Back.BLACK + Fore.CYAN + Fore.MAGENTA
+			self.__lastShieldTime = int(round(time.time()))
 
 	def checkShield(self):
-		if self._shieldOn == 1:
-			if int(round(time.time())) - self._lastShieldTime > self._shieldStayTime:
-				self._prevShieldTime = int(round(time.time()))
-				self._shieldOn = 2
-		elif self._shieldOn == 2:
-			if int(round(time.time())) - self._lastShieldTime > self._shieldPowerUpTime:
-				self._lastShieldTime = 0
-				self._shieldOn = 0
+		if self.__shieldOn == 1:
+			if int(round(time.time())) - self.__lastShieldTime > self.__shieldStayTime:
+				self.__prevShieldTime = int(round(time.time()))
+				self.__shieldOn = 2
+				self._col = Back.BLACK + Fore.CYAN
+		elif self.__shieldOn == 2:
+			if int(round(time.time())) - self.__lastShieldTime > self.__shieldPowerUpTime:
+				self.__lastShieldTime = 0
+				self.__shieldOn = 0
 
 	def get_shieldPower(self):
-		if self._shieldOn == 1:
-			return int((self._shieldStayTime - int(round(time.time())) + self._lastShieldTime) / self._shieldStayTime * 100)
-		elif self._shieldOn == 2:
+		if self.__shieldOn == 1:
+			return int((self.__shieldStayTime - int(round(time.time())) + self.__lastShieldTime) / self.__shieldStayTime * 100)
+		elif self.__shieldOn == 2:
 			return 0
 		else:
 			return 100
 
 	def set_live(self, obj):
-		if self._shieldOn == 1:
+		if self.__shieldOn == 1:
 			return
-		if self._shieldOn != 1:
-			self._lives -= 1
-		if not self._lives:
-			obj['grid'].gameOver()
+		if self.__shieldOn != 1:
+			self.__livesLeft -= 1
+		if not self.__livesLeft:
+			obj['grid'].gameOver(obj)
 
 	def get_live(self):
-		return self._lives
+		return self.__livesLeft
 
 	def get_score(self):
-		return self._score
+		return self.__score
 
 	def set_score(self, x):
-		self._score += x
+		self.__score += x
 
 	def checkCol(self, x, y, disp, obj):
 		dim = disp.shape
@@ -99,18 +116,18 @@ class Barry(Person):
 				if i[1] + k - y < 0 or i[1] + k - y >= dim[1]:
 					continue
 				if disp[i[0] + j - x][i[1] + k - y] != ' ':
-					if self._shieldOn != 1:
-						self._lives -= 1
-					if not self._lives:
-						obj['grid'].gameOver()
+					if self.__shieldOn != 1:
+						self.__livesLeft -= 1
+					if not self.__livesLeft:
+						obj['grid'].gameOver(obj)
 					return True
 		return False
 
 	def objCol(self, obj):
 		isCol = 0
-		self._score += obj['coin'].checkCol(self._x, self._y, self._disp, obj)
+		self.__score += obj['coin'].checkCol(self._x, self._y, self._disp, obj)
 		obj['speedBoost'].checkCol(self._x, self._y, self._disp, obj)
-		self._dragonOn |= obj['dragonBoost'].checkCol(self._x, self._y, self._disp, obj)
+		self.__dragonOn |= obj['dragonBoost'].checkCol(self._x, self._y, self._disp, obj)
 		isCol |= obj['boss'].checkCol(self._x, self._y, self._disp, obj)
 		if isCol:
 			self._x = obj['grid'].get_dim()[0][1] - self._disp().shape[0]
@@ -118,14 +135,18 @@ class Barry(Person):
 		isCol |= obj['beam'].checkCol(self._x, self._y, self._disp, obj)
 		isCol |= obj['iceBall'].checkCol(self._x, self._y, self._disp, obj)
 		obj['bullet'].checkCol(self._x, self._y, self._disp, obj)
-		if isCol and self._shieldOn != 1 and not self._dragonOn:
-			self._lives -= 1
-		if not self._lives:
-			obj['grid'].gameOver()
+		if isCol and self.__shieldOn != 1 and not self.__dragonOn:
+			self.__livesLeft -= 1
+		if not self.__livesLeft:
+			obj['grid'].gameOver(obj)
 		return isCol
 
 	def move(self, y, obj):
+		if self.__dragonOn:
+			self.__dragonOn += 1
 		dim = self._disp.shape
+		if self.objCol(obj) and self.__dragonOn > 20:
+			self.__dragonOn = 0
 		if y:	
 			left = int(y / abs(y))
 			gridDim = obj['grid'].get_dim()
@@ -136,15 +157,13 @@ class Barry(Person):
 					self._y = gridDim[1][0]
 				else:
 					self._y += left
-				if self.objCol(obj):
-					self._dragonOn = 0
+				if self.objCol(obj) and self.__dragonOn > 20:
+					self.__dragonOn = 0
 				y = (abs(y) - 1) * left
-		if self.objCol(obj):
-			self._dragonOn = 0
 
 	def jump(self, x, obj):
 		if x < 0:
-			self._jumpCount = 0
+			self.__jumpCount = 0
 		dim = self._disp.shape
 		up = x
 		if x: 
@@ -166,5 +185,5 @@ class Barry(Person):
 	def gravity(self, obj):
 		if self.onGround(obj):
 			return
-		self._jumpCount += 1
-		self.jump(math.floor(self._gravity * self._jumpCount), obj)
+		self.__jumpCount += 1
+		self.jump(math.floor(self.__gravity * self.__jumpCount), obj)

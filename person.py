@@ -9,9 +9,9 @@ class Person:
 		self._col = col
 
 	def drawPerson(self, obj):
-		dim = self._disp.shape
 		if self._x == None:
 			return
+		dim = self._disp.shape
 		for i in range(dim[0]):
 			for j in range(dim[1]):
 				if self._disp[i][j] != ' ':

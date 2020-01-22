@@ -14,21 +14,19 @@ class BossEnemy(Person):
 				tmp.append(i)
 			self._disp.append(tmp)
 		self._disp = np.array(self._disp)
-		self._x = None
-		self._y = gridDim[1][1] - self._disp.shape[1]
-		self._lives = 10
-		self._livesLeft = 10
-		Person.__init__(self, self._x, self._y, self._disp, Fore.MAGENTA + Back.BLACK)
-		self._isReady = 0
+		Person.__init__(self, None, gridDim[1][1] - self._disp.shape[1], self._disp, Fore.MAGENTA + Back.BLACK)
+		self.__lives = 20
+		self.__livesLeft = self.__lives
+		self.__isReady = 0
 
 	def get_isReady(self):
-		return self._isReady		
+		return self.__isReady		
 
 	def set_ready(self, x):
-		self._isReady = x
+		self.__isReady = x
 
 	def get_live(self):
-		return self._livesLeft / self._lives * 100
+		return int(self.__livesLeft / self.__lives * 100)
 
 	def checkCol(self, x, y, disp, obj):
 		if not self._x:
@@ -48,9 +46,9 @@ class BossEnemy(Person):
 				if i[1] + k - y < 0 or i[1] + k - y >= dim[1]:
 					continue
 				if disp[i[0] + j - x][i[1] + k - y] != ' ':
-					self._livesLeft -= 1
-					if not self._livesLeft:
-						obj['grid'].gameWon()
+					self.__livesLeft -= 1
+					if not self.__livesLeft:
+						obj['grid'].gameWon(obj)
 					return True
 		return False
 
@@ -66,8 +64,8 @@ class BossEnemy(Person):
 		obj['coin'].checkCol(self._x, self._y, self._disp, obj)
 		obj['magnet'].checkCol(self._x, self._y, self._disp, obj)
 		if obj['bullet'].checkCol(self._x, self._y, self._disp, obj):
-			self._livesLeft -= 1
+			self.__livesLeft -= 1
 		if obj['barry'].checkCol(self._x, self._y, self._disp, obj):
-			self._livesLeft -= 1
+			self.__livesLeft -= 1	
 			obj['barry'].set_XY(obj['grid'].get_dim()[0][1] - obj['barry'].get_disp().shape[0], obj['grid'].get_dim()[1][0])
 	
